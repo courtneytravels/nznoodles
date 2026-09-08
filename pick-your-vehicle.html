@@ -66,8 +66,10 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
 table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1180px;}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
 td.wrap{white-space:normal;max-width:220px;font-size:11.5px;}
-th{cursor:pointer;font-weight:600;color:var(--heading);background:#F5EEDF;user-select:none;}
+th{cursor:pointer;font-weight:600;color:var(--heading);background:#F5EEDF;user-select:none;white-space:normal;vertical-align:bottom;}
 th:hover{color:var(--lilac-text);}
+th.col-center,td.col-center{text-align:center;}
+.tile-note{font-size:10px;margin-top:6px;opacity:0.75;}
 tbody tr:hover td{background:#FAF7EF;}
 .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:8px;font-weight:500;}
 .amenity{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:11px;margin-right:4px;font-weight:600;}
@@ -193,14 +195,14 @@ tr.chosen-row td{background:#F3ECFA;}
             <th data-key="vehicle">Vehicle</th>
             <th data-key="type">Type</th>
             <th data-key="transmission">Transmission</th>
-            <th data-key="sleeps">Sleeps</th>
-            <th data-key="beds">Beds</th>
-            <th data-key="amenities">Amenities</th>
+            <th data-key="sleeps" class="col-center">Sleeps</th>
+            <th data-key="beds" class="col-center">Beds</th>
+            <th data-key="amenities" class="col-center">Amenities</th>
             <th data-key="priceAUD" class="col-extra">Price</th>
             <th data-key="priceDayAUD" class="col-extra">Per day</th>
             <th data-key="insurance" class="col-extra">Insurance total — est.*</th>
-            <th data-key="grandTotal">Grand total — est.*</th>
-            <th data-key="grandTotalDay">Grand total/day — est.*</th>
+            <th data-key="grandTotal" class="col-center" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">Grand total — est.*</th>
+            <th data-key="grandTotalDay" class="col-center">Grand total/day — est.*</th>
             <th>Split</th>
           </tr>
         </thead>
@@ -640,12 +642,14 @@ function renderTiles(rows, days){
   const t = computeTiles(rows);
   if(!t){ container.innerHTML = ''; return; }
   const dTxt = days ? ` (${days}d)` : '';
+  const noteHtml = text => `<div class="tile-note" style="color:${text}">Estimate: vehicle hire + insurance</div>`;
   const optionTile = (label, bg, text, row) => {
-    if(!row) return `<div class="tile" style="background:${bg}"><div class="tile-label" style="color:${text}">${label}</div><div class="tile-price" style="color:${text}">—</div></div>`;
+    if(!row) return `<div class="tile" style="background:${bg}"><div class="tile-label" style="color:${text}">${label}</div><div class="tile-price" style="color:${text}">—</div>${noteHtml(text)}</div>`;
     return `<div class="tile" style="background:${bg}">
       <div class="tile-label" style="color:${text}">${label}</div>
       <div class="tile-price" style="color:${text}">$${fmtMoney(row.grandTotal)}<span class="tile-perday" style="color:${text}"> · $${fmtMoney(row.grandTotalDay)}/day${dTxt}</span></div>
       <div class="tile-sub" style="color:${text}">${escapeHtml(row.vehicleName)} · ${escapeHtml(row.company)}</div>
+      ${noteHtml(text)}
     </div>`;
   };
   container.innerHTML =
@@ -655,6 +659,7 @@ function renderTiles(rows, days){
       <div class="tile-label" style="color:var(--gold-text)">Average grand total</div>
       <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(t.avg)}<span class="tile-perday" style="color:var(--gold-text)"> · $${fmtMoney(t.avgDay)}/day${dTxt}</span></div>
       <div class="tile-sub" style="color:var(--gold-text)">Across ${document.getElementById('tbody').children.length} matching vehicles</div>
+      ${noteHtml('var(--gold-text)')}
     </div>` +
     optionTile('Highest price option', 'var(--plum-bg)', 'var(--plum-text)', t.highest);
 }
@@ -690,7 +695,7 @@ function render(){
       ? `<span class="price-cell" style="${heatStyleFor(r.insuranceTotal, insMin, insMax)}">$${fmtMoney(r.insuranceTotal)}</span>`
       : '—';
     const gtCell = r.grandTotal !== null
-      ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)}">$${fmtMoney(r.grandTotal)}</span>`
+      ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)}" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">$${fmtMoney(r.grandTotal)}</span>`
       : '—';
 
     return `<tr class="${r.rowKey === state.chosenKey ? 'chosen-row' : ''}">
@@ -698,14 +703,14 @@ function render(){
       <td>${vehicleCell}</td>
       <td>${typeBadge(r.type)}</td>
       <td>${transBadge(r.transmission)}</td>
-      <td>${r.sleeps || '—'}</td>
-      <td class="wrap">${escapeHtml(r.beds)}</td>
-      <td>${amenityIcon(r.toilet,'T')}${amenityIcon(r.shower,'S')}</td>
+      <td class="col-center">${r.sleeps || '—'}</td>
+      <td class="wrap col-center">${escapeHtml(r.beds)}</td>
+      <td class="col-center">${amenityIcon(r.toilet,'T')}${amenityIcon(r.shower,'S')}</td>
       <td class="col-extra">${priceCell}</td>
       <td class="col-extra">${r.price ? '$' + fmtMoney(r.price.dayAud) : '—'}</td>
       <td class="col-extra">${insCell}</td>
-      <td>${gtCell}</td>
-      <td>${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : '—'}</td>
+      <td class="col-center">${gtCell}</td>
+      <td class="col-center">${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : '—'}</td>
       <td><button class="choose-btn" data-key="${escapeHtml(r.rowKey)}">${r.rowKey === state.chosenKey ? 'Chosen ✓' : 'Choose →'}</button></td>
     </tr>`;
   }).join('');
@@ -967,18 +972,22 @@ function renderSplit(){
     <div class="tile" style="background:var(--turquoise-bg)">
       <div class="tile-label" style="color:var(--turquoise-text)">Vehicle cost</div>
       <div class="tile-price" style="color:var(--turquoise-text)">$${fmtMoney(priceAud)}</div>
+      <div class="tile-note" style="color:var(--turquoise-text)">Estimate: vehicle hire + insurance</div>
     </div>
     <div class="tile" style="background:var(--gold-bg)">
       <div class="tile-label" style="color:var(--gold-text)">Insurance estimate</div>
       <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(chosen.insuranceTotal)}</div>
+      <div class="tile-note" style="color:var(--gold-text)">Estimate: vehicle hire + insurance</div>
     </div>
     <div class="tile" style="background:var(--coral-bg)">
       <div class="tile-label" style="color:var(--coral-text)">Grand total</div>
       <div class="tile-price" style="color:var(--coral-text)">$${fmtMoney(chosen.grandTotal)}</div>
+      <div class="tile-note" style="color:var(--coral-text)">Estimate: vehicle hire + insurance</div>
     </div>
     <div class="tile" style="background:var(--plum-bg)">
       <div class="tile-label" style="color:var(--plum-text)">Grand total / day</div>
       <div class="tile-price" style="color:var(--plum-text)">$${fmtMoney(chosen.grandTotalDay)}</div>
+      <div class="tile-note" style="color:var(--plum-text)">Estimate: vehicle hire + insurance</div>
     </div>`;
 
   summaryEl.innerHTML = `<h3>${escapeHtml(chosenBase.vehicleName)}</h3>
