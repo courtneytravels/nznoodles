@@ -19,6 +19,7 @@
   --lilac-bg:#E3D3F5; --lilac-text:#5B3F7A;
   --coral-bg:#FFD4C2; --coral-text:#A13F1E;
   --teal-bg:#A8E6DC; --teal-text:#146A5C;
+  --green-bg:#D9F0D6; --green-text:#3D7A4A;
   --plum-bg:#9C3868; --plum-text:#FBF6EC;
   --babypink-bg:#FFF0F5; --babypink-border:#F9C9DC;
   --vehiclepink-bg:#F7B8D2; --vehiclepink-border:#DB84A8;
@@ -83,6 +84,7 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
 #status{padding:20px 0;color:var(--muted);font-size:14px;}
 .price-cell{font-weight:600;border-radius:6px;padding:4px 10px;display:inline-block;}
 .choose-btn{font-family:'Inter';font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;font-weight:600;border:1px solid var(--lilac-text);background:#fff;color:var(--lilac-text);}
+.promo-badge{display:inline-block;margin-top:4px;font-size:9.5px;font-weight:700;letter-spacing:0.02em;padding:2px 7px;border-radius:6px;background:var(--green-bg);color:var(--green-text);cursor:help;border-bottom:1px dotted var(--green-text);}
 tr.chosen-row td{background:#F3ECFA;}
 .split-summary{border-radius:12px;padding:16px 20px;margin-bottom:16px;background:#fff;border:1px solid var(--border);}
 .split-summary h3{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:20px;margin:0 0 4px;color:var(--heading);}
@@ -227,7 +229,7 @@ tr.chosen-row td{background:#F3ECFA;}
         <tbody id="tbody"></tbody>
       </table>
     </div>
-    <p style="font-size:12px;color:var(--muted);margin-top:8px">* Insurance is estimated from an average daily rate × trip length, not a locked-in quote — confirm the exact figure with the rental company at booking. Grand total and grand total/day inherit this estimate since they include insurance.</p>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">* This estimate combines the vehicle hire cost quoted on the rental company's website with an estimated insurance cost — calculated by averaging that vehicle's available insurance options and multiplying by the number of days hired. It isn't a locked-in quote — confirm the exact figure with the rental company at booking. Grand total and grand total/day inherit this estimate since they include insurance.</p>
   </div>
 
   <div class="right-col">
@@ -652,6 +654,15 @@ function transBadge(trans){
 function amenityIcon(on, letter){
   return `<span class="amenity ${on ? 'on' : 'off'}">${letter}</span>`;
 }
+function companyPromoBadge(company){
+  if(/indie/i.test(company)){
+    return `<br><span class="promo-badge" title="Use promo code MORE25 at checkout for additional savings">MORE25</span>`;
+  }
+  if(/star\s*rv/i.test(company)){
+    return `<br><span class="promo-badge" title="Use promo code EARLYBIRD10 at checkout for additional savings">EARLYBIRD10</span>`;
+  }
+  return '';
+}
 
 function computeTiles(rows){
   const priced = rows.filter(r => r.grandTotal !== null && !isNaN(r.grandTotal));
@@ -729,7 +740,7 @@ function render(){
       : (isSoldOut ? soldOutTag : '—');
 
     return `<tr class="${r.rowKey === state.chosenKey ? 'chosen-row' : ''}">
-      <td>${escapeHtml(r.company)}</td>
+      <td>${escapeHtml(r.company)}${companyPromoBadge(r.company)}</td>
       <td>${vehicleCell}</td>
       <td>${typeBadge(r.type)}</td>
       <td>${transBadge(r.transmission)}</td>
