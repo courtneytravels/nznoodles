@@ -26,7 +26,7 @@
 }
 *{box-sizing:border-box;}
 html{-webkit-text-size-adjust:100%;}
-body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);}
 .hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);}
 .hero-inner{max-width:1600px;margin:0 auto;}
 .hero h1{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:44px;margin:0 0 8px;color:#3D2350;}
@@ -69,7 +69,7 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
 .table-wrap.collapsed .col-extra{display:none;}
 table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1180px;}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
-td.wrap{white-space:normal;max-width:220px;font-size:10.5px;}
+td.wrap{white-space:normal;max-width:130px;font-size:10.5px;}
 th{cursor:pointer;font-weight:600;color:var(--heading);background:#F5EEDF;user-select:none;white-space:normal;vertical-align:bottom;}
 th:hover{color:var(--lilac-text);}
 th.col-center,td.col-center{text-align:center;}
@@ -84,7 +84,34 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
 #status{padding:20px 0;color:var(--muted);font-size:14px;}
 .price-cell{font-weight:600;border-radius:6px;padding:4px 10px;display:inline-block;}
 .choose-btn{font-family:'Inter';font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;font-weight:600;border:1px solid var(--lilac-text);background:#fff;color:var(--lilac-text);}
-.promo-badge{display:inline-block;margin-top:4px;font-size:9.5px;font-weight:700;letter-spacing:0.02em;padding:2px 7px;border-radius:6px;background:var(--green-bg);color:var(--green-text);cursor:help;border-bottom:1px dotted var(--green-text);}
+.promo-badge{display:inline-block;margin-top:4px;font-size:9.5px;font-weight:700;letter-spacing:0.02em;padding:2px 7px;border-radius:6px;background:var(--green-bg);color:var(--green-text);cursor:help;border-bottom:1px dotted var(--green-text);position:relative;}
+.promo-badge::after{
+  content:attr(data-tooltip);
+  position:absolute;
+  bottom:130%;
+  left:0;
+  background:#3A362E;
+  color:#FBF6EC;
+  padding:7px 10px;
+  border-radius:6px;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:normal;
+  white-space:normal;
+  width:200px;
+  line-height:1.4;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity 0.12s ease;
+  z-index:20;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+.promo-badge:hover::after,
+.promo-badge:focus::after{
+  opacity:1;
+  visibility:visible;
+}
 tr.chosen-row td{background:#F3ECFA;}
 .split-summary{border-radius:12px;padding:16px 20px;margin-bottom:16px;background:#fff;border:1px solid var(--border);}
 .split-summary h3{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:20px;margin:0 0 4px;color:var(--heading);}
@@ -216,7 +243,7 @@ tr.chosen-row td{background:#F3ECFA;}
             <th data-key="type">Type</th>
             <th data-key="transmission">Transmission</th>
             <th data-key="sleeps" class="col-center">Sleeps</th>
-            <th data-key="beds" class="col-center">Beds</th>
+            <th data-key="beds" class="col-center" style="width:130px">Beds</th>
             <th data-key="amenities" class="col-center">Amenities</th>
             <th data-key="priceAUD" class="col-extra">Price</th>
             <th data-key="priceDayAUD" class="col-extra">Per day</th>
@@ -656,10 +683,10 @@ function amenityIcon(on, letter){
 }
 function companyPromoBadge(company){
   if(/indie/i.test(company)){
-    return `<br><span class="promo-badge" title="Use promo code MORE25 at checkout for additional savings">MORE25</span>`;
+    return `<br><span class="promo-badge" tabindex="0" data-tooltip="Use promo code MORE25 at checkout for additional savings">MORE25</span>`;
   }
   if(/star\s*rv/i.test(company)){
-    return `<br><span class="promo-badge" title="Use promo code EARLYBIRD10 at checkout for additional savings">EARLYBIRD10</span>`;
+    return `<br><span class="promo-badge" tabindex="0" data-tooltip="Use promo code EARLYBIRD10 at checkout for additional savings">EARLYBIRD10</span>`;
   }
   return '';
 }
@@ -736,7 +763,7 @@ function render(){
       ? `<span class="price-cell" style="${heatStyleFor(r.insuranceTotal, insMin, insMax)}">$${fmtMoney(r.insuranceTotal)}</span>`
       : (isSoldOut ? soldOutTag : '—');
     const gtCell = r.grandTotal !== null
-      ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)}" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">$${fmtMoney(r.grandTotal)}</span>`
+      ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)};font-size:11px" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">$${fmtMoney(r.grandTotal)}</span>`
       : (isSoldOut ? soldOutTag : '—');
 
     return `<tr class="${r.rowKey === state.chosenKey ? 'chosen-row' : ''}">
@@ -751,7 +778,7 @@ function render(){
       <td class="col-extra">${priceAUD !== null ? '$' + fmtMoney(r.price.dayAud) : (isSoldOut ? soldOutTag : '—')}</td>
       <td class="col-extra">${insCell}</td>
       <td class="col-center">${gtCell}</td>
-      <td class="col-center">${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : (isSoldOut ? soldOutTag : '—')}</td>
+      <td class="col-center" style="font-size:11px">${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : (isSoldOut ? soldOutTag : '—')}</td>
       <td><button class="choose-btn" data-key="${escapeHtml(r.rowKey)}">${r.rowKey === state.chosenKey ? 'Chosen ✓' : 'Choose →'}</button></td>
     </tr>`;
   }).join('');
