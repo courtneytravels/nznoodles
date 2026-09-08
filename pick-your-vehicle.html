@@ -235,6 +235,19 @@ function parseGvizDate(raw){
 function parseCellAsDate(cell){
   const fromLiteral = parseGvizDate(cell.v);
   if(fromLiteral) return fromLiteral;
+  const dmy = str => {
+    if(typeof str !== 'string') return null;
+    const m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if(!m) return null;
+    let day = Number(m[1]), month = Number(m[2]), year = Number(m[3]);
+    if(year < 100) year += 2000;
+    if(month > 12 && day <= 12){ const t = day; day = month; month = t; }
+    return new Date(year, month - 1, day);
+  };
+  const fromF = dmy(cell.f);
+  if(fromF) return fromF;
+  const fromV = dmy(cell.v);
+  if(fromV) return fromV;
   if(cell.f){
     const d = new Date(cell.f);
     if(!isNaN(d.getTime())) return d;
@@ -396,11 +409,11 @@ function currentRows(){
 }
 
 const HEAT_STOPS = [
-  {t:0, rgb:[87,187,138]},
-  {t:0.25, rgb:[171,201,120]},
-  {t:0.5, rgb:[246,214,102]},
-  {t:0.75, rgb:[240,169,109]},
-  {t:1, rgb:[230,124,115]}
+  {t:0, rgb:[71,216,145]},
+  {t:0.25, rgb:[183,225,112]},
+  {t:0.5, rgb:[255,223,110]},
+  {t:0.75, rgb:[255,177,111]},
+  {t:1, rgb:[255,119,107]}
 ];
 function heatColor(t){
   t = Math.max(0, Math.min(1, t));
@@ -640,6 +653,10 @@ function renderAmenityChips(){
   });
 }
 
+function validDropoffsFor(pickupKey){
+  return dropoffOptions.filter(d => dateOptions.some(g => dateKey(g.startDate) === pickupKey && dateKey(g.endDate) === d.key));
+}
+
 function renderDateChips(){
   const pContainer = document.getElementById('pickupChips');
   pContainer.innerHTML = pickupOptions.map(o => {
@@ -650,11 +667,20 @@ function renderDateChips(){
     return `<button class="chip" data-key="${o.key}" style="${style}">${formatDateLabel(o.date)}</button>`;
   }).join('');
   pContainer.querySelectorAll('.chip').forEach(btn => {
-    btn.addEventListener('click', () => { state.pickup = btn.dataset.key; renderDateChips(); render(); });
+    btn.addEventListener('click', () => {
+      state.pickup = btn.dataset.key;
+      const valid = validDropoffsFor(state.pickup);
+      if(!valid.some(d => d.key === state.dropoff)){
+        state.dropoff = valid.length ? valid[0].key : null;
+      }
+      renderDateChips();
+      render();
+    });
   });
 
+  const validDrop = validDropoffsFor(state.pickup);
   const dContainer = document.getElementById('dropoffChips');
-  dContainer.innerHTML = dropoffOptions.map(o => {
+  dContainer.innerHTML = validDrop.map(o => {
     const active = o.key === state.dropoff;
     const style = active
       ? `background:var(--coral-bg);color:var(--coral-text);border-color:var(--coral-text)`
