@@ -6,11 +6,13 @@
 <title>NZ Noodles</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,700;1,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --plum: #3d2350;
     --plum-soft: #4a2e49;
+    --lemon: #fff0a8;
+    --lemon-soft: #f0dd8f;
     --cream: #fbf6ec;
     --blue-bg: #b9ede9;
     --blue-text: #1f5c58;
@@ -83,25 +85,36 @@
 
   .title {
     font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-weight: 500;
-    font-size: clamp(2.75rem, 8vw, 5rem);
+    font-style: normal;
+    font-weight: 700;
+    font-size: clamp(2.5rem, 8vw, 4.75rem);
     letter-spacing: -0.01em;
-    margin: 0 0 18px;
-    color: var(--plum);
+    line-height: 0.95;
+    margin: 0 0 4px;
+    color: var(--lemon);
   }
 
   .meta {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    margin-bottom: 40px;
+    margin-bottom: 25px;
   }
 
   .meta__line {
-    font-size: 0.95rem;
-    font-weight: 400;
-    color: var(--plum-soft);
+    font-family: 'Fraunces', serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1.2rem;
+    color: #ffd1a8;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .meta__line:nth-child(1) {
+    font-weight: 600;
+    text-transform: none;
+    font-style: italic;
     letter-spacing: 0.01em;
   }
 
@@ -140,18 +153,18 @@
 <div class="hero">
   <img
     class="hero__photo"
-    src="https://static1.squarespace.com/static/67f5cab6225dcf7a8c5efa83/67f712c7fcfdf576caf045f0/67fadbaa05a5f607a9e228e9/1744494868143/aoraki-pastel-dawn-mt-cook.jpg?format=1500w"
-    alt="Pastel dawn over Aoraki / Mt Cook"
+    src="https://courtneytravels.github.io/nznoodles/MountCook.png"
+    alt="Mount Cook / Aoraki"
   >
   <div class="hero__scrim"></div>
 
   <div class="hero__content">
     <h1 class="title">NZ Noodles</h1>
     <div class="meta">
-      <span class="meta__line">November 2026</span>
-      <span class="meta__line">South Island, New Zealand</span>
+      <span class="meta__line">South Island Road Trip</span>
+      <span class="meta__line">Aotearoa New Zealand</span>
     </div>
-    <a class="enter" href="https://courtneytravels.github.io/nznoodles/pick-your-vehicle.html">Enter</a>
+    <a class="enter" href="https://courtneytravels.github.com/nznoodles/pick-your-vehicle.html">Enter</a>
   </div>
 </div>
 
