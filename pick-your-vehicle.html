@@ -23,7 +23,7 @@
 }
 *{box-sizing:border-box;}
 html{-webkit-text-size-adjust:100%;}
-body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);}
 .hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);}
 .hero-inner{max-width:1600px;margin:0 auto;}
 .hero h1{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:44px;margin:0 0 8px;color:#3D2350;}
@@ -47,8 +47,10 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
 .chip{font-family:'Inter';font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-weight:500;border:1px solid var(--border);background:#fff;color:var(--muted);}
 #bedsChips{max-width:520px;}
 #bedsChips .chip{white-space:normal;text-align:left;font-size:11px;line-height:1.3;padding:4px 10px;}
-#bucketRow{max-width:none;flex-wrap:nowrap;}
 #bucketRow .chip{white-space:nowrap;}
+@media (min-width:1150px){
+  #bucketRow{max-width:none;flex-wrap:nowrap;}
+}
 
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:22px;}
 .tile{border-radius:12px;padding:14px 16px;min-height:78px;}
@@ -94,7 +96,7 @@ tr.chosen-row td{background:#F3ECFA;}
 .cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--ink);}
 .cal-legend .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
 
-@media (max-width:900px){
+@media (max-width:1150px){
   .page-layout{flex-direction:column;padding:16px;gap:20px;}
   .right-col{flex:none;width:100%;position:static;flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;}
   .right-col img{width:200px;flex:0 0 auto;}
@@ -246,6 +248,13 @@ tr.chosen-row td{background:#F3ECFA;}
     </div>
 
     <p style="font-size:12px;color:var(--muted);margin-top:14px">Insurance figures are estimates — see note on the Pick your vehicle tab.</p>
+  </div>
+
+  <div class="right-col">
+    <img src="https://cdn.prod.rexby.com/image/08e59d2d94964b30acbbb95ce5b7cba2?format=webp&width=1080&height=1350&quality=80" alt="New Zealand scenery" loading="lazy">
+    <img src="https://images.unsplash.com/photo-1617677458944-b39140d92d02?ixid=M3w0NzkzMTh8MHwxfHNlYXJjaHw3fHxSb3lzJTIwUGVha3xlbnwwfHx8fDE3MjA4MzE4NTl8MA&ixlib=rb-4.0.3&auto=format&w=1080&h=1350&fit=crop&q=80" alt="New Zealand scenery" loading="lazy">
+    <img src="https://abbiejadewanders.co.uk/wp-content/uploads/2022/02/IMG_0558-2-up-scaled.jpg" alt="New Zealand scenery" loading="lazy">
+    <img src="https://trackslesstravelled.com/wp-content/uploads/2024/09/liverpool-hut-new-zealand-sunrise.jpg" alt="New Zealand scenery" loading="lazy">
   </div>
 </div>
 
