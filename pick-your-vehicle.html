@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NZ Noodles Road Trip 🦜🥾🌿🚐🏔️🗺️🏕️🌌 — Pick your vehicle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBF6EC;
+  --ink:#3A362E;
+  --muted:#8B8578;
+  --border:#E4DCC8;
+  --heading:#6B4A8C;
+  --turquoise-bg:#B9EDE9; --turquoise-text:#1F5C58;
+  --gold-bg:#FFE8B8; --gold-text:#8A5A12;
+  --pink-bg:#F7CBE0; --pink-text:#7A2F52;
+  --lilac-bg:#E3D3F5; --lilac-text:#5B3F7A;
+  --coral-bg:#FFD4C2; --coral-text:#A13F1E;
+  --teal-bg:#A8E6DC; --teal-text:#146A5C;
+  --plum-bg:#9C3868; --plum-text:#FBF6EC;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);}
+.hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);}
+.hero-inner{max-width:1100px;margin:0 auto;}
+.hero h1{font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:44px;margin:0 0 8px;color:#3D2350;}
+.hero p{margin:0;font-size:16px;color:#4A2E49;}
+nav.tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--border);background:var(--paper);}
+nav.tabs .tabs-inner{max-width:1100px;margin:0 auto;display:flex;gap:4px;width:100%;}
+nav.tabs button{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;padding:14px 18px;border:none;background:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);}
+nav.tabs button.active{color:var(--heading);border-bottom-color:var(--teal-text);}
+main{padding:24px;max-width:1100px;margin:0 auto;}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;align-items:center;}
+.control-group{display:flex;flex-direction:column;gap:4px;}
+.control-label{font-size:11px;color:var(--muted);}
+select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--ink);}
+.chip{font-family:'Inter';font-size:13px;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:#fff;cursor:pointer;color:var(--ink);}
+.chip.active{background:var(--lilac-bg);color:var(--lilac-text);border-color:var(--lilac-text);}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;}
+.bucket-chip{font-family:'Inter';font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-weight:500;border:1px solid transparent;}
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:920px;}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+th{cursor:pointer;font-weight:600;color:var(--heading);background:#F5EEDF;user-select:none;}
+th:hover{color:var(--lilac-text);}
+tbody tr:hover td{background:#FAF7EF;}
+.badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:8px;font-weight:500;}
+.amenity{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:11px;margin-right:4px;font-weight:600;}
+.amenity.on{background:var(--turquoise-bg);color:var(--turquoise-text);}
+.amenity.off{background:#EFEAE0;color:var(--muted);}
+.insurance-tier{display:inline-block;font-size:11px;padding:2px 7px;border-radius:6px;margin-right:3px;font-weight:500;}
+a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid var(--lilac-bg);}
+#status{padding:20px 0;color:var(--muted);font-size:14px;}
+.price-cell{font-weight:600;border-radius:6px;padding:4px 10px;display:inline-block;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <h1>NZ Noodles Road Trip <span style="font-style:normal">🦜🥾🌿🚐🏔️🗺️🏕️🌌</span></h1>
+    <p>South Island, New Zealand — November 2026</p>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tabs-inner">
+    <button class="active">Pick your vehicle</button>
+  </div>
+</nav>
+
+<main>
+  <div class="controls">
+    <div class="control-group">
+      <span class="control-label">Trip dates</span>
+      <select id="dateSelect"></select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Type</span>
+      <select id="typeSelect">
+        <option value="all">All</option>
+        <option value="campervan">Campervan</option>
+        <option value="motorhome">Motorhome</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Transmission</span>
+      <select id="transSelect">
+        <option value="all">All</option>
+        <option value="automatic">Automatic</option>
+        <option value="manual">Manual</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Sleeps</span>
+      <select id="sleepsSelect">
+        <option value="4" selected>4+</option>
+        <option value="6">6+</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Beds</span>
+      <select id="bedsSelect">
+        <option value="all">All</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Amenities</span>
+      <div class="chip-row">
+        <button class="chip" data-amenity="sc">Self-contained</button>
+        <button class="chip" data-amenity="toilet">Toilet</button>
+        <button class="chip" data-amenity="shower">Shower</button>
+      </div>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Price (AUD, total trip)</span>
+      <div class="chip-row" id="bucketRow"></div>
+    </div>
+  </div>
+
+  <p id="status">Loading vehicle data from your Google Sheet…</p>
+
+  <div class="table-wrap" id="tableWrap" style="display:none">
+    <table>
+      <thead>
+        <tr>
+          <th data-key="company">Company</th>
+          <th data-key="vehicle">Vehicle</th>
+          <th data-key="type">Type</th>
+          <th data-key="transmission">Transmission</th>
+          <th data-key="sleeps">Sleeps</th>
+          <th data-key="beds">Beds</th>
+          <th data-key="amenities">Amenities</th>
+          <th data-key="priceNZD">Price (NZD)</th>
+          <th data-key="priceAUD">Price (AUD)</th>
+          <th data-key="priceDayAUD">Per day (AUD)</th>
+          <th data-key="insurance">Insurance / day (NZD)</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+const SHEET_ID = '1xURtsfFb8DAIVcRo2TWQ3GvpIF5pGluKS_4cY58POE0';
+const SHEET_NAME = 'Campervans NZ';
+const GROUP_STARTS = [9,12,15,18,21,24,27,30];
+const INSURANCE_COLS = [33,34,35];
+
+const BUCKETS = [
+  {label:'<$3500', max:3500, bg:'var(--turquoise-bg)', text:'var(--turquoise-text)'},
+  {label:'$3500–5000', max:5000, bg:'var(--gold-bg)', text:'var(--gold-text)'},
+  {label:'$5000–7500', max:7500, bg:'var(--coral-bg)', text:'var(--coral-text)'},
+  {label:'>$7500', max:Infinity, bg:'var(--plum-bg)', text:'var(--plum-text)'}
+];
+
+let allRows = [];
+let dateOptions = [];
+let bedsOptions = [];
+let state = {
+  dateIndex: 0,
+  type: 'all',
+  transmission: 'all',
+  sleeps: 4,
+  beds: 'all',
+  sc: false, toilet: false, shower: false,
+  buckets: new Set([0,1,2,3]),
+  sortKey: 'priceAUD',
+  sortDir: 'asc'
+};
+
+function escapeHtml(s){
+  if(s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function getCell(row, idx){
+  if(!row || !row.c || !row.c[idx]) return {v:null,f:null};
+  const c = row.c[idx];
+  return {v: c.v !== undefined ? c.v : null, f: c.f !== undefined ? c.f : null};
+}
+function getBool(row, idx){
+  const {v, f} = getCell(row, idx);
+  if(v === null || v === '') return false;
+  if(typeof v === 'string' && /^(no|false|n)$/i.test(v.trim())) return false;
+  return true;
+}
+function extractLink(raw){
+  if(!raw) return null;
+  const m = String(raw).match(/https?:\/\/[^\s")]+/);
+  return m ? m[0] : null;
+}
+// The sheet's vehicle links are real cell hyperlinks, not a HYPERLINK() formula or plain
+// text URL — Google's public read feed only exposes the display text for those, not the
+// target. This map is a snapshot of today's links so they still work; if you add or rename
+// a vehicle, either tell me to refresh this map, or add a plain-text "Link" column to the
+// sheet and I'll switch to reading it live instead.
+const VEHICLE_LINKS = {
+  'Voyager 4 Berth': 'https://www.britz.com/nz/en/campervan-hire/4-berth-voyager-1',
+  'Navigator 5 Berth': 'https://www.britz.com/nz/en/campervan-hire/5-berth-navigator',
+  'Odyssey 4 Berth': 'https://www.britz.com/nz/en/campervan-hire/4-berth-odyssey',
+  'Apollo Endeavour Camper': 'https://www.apollocamper.com/campervan-hire-new-zealand/endeavour',
+  'Apollo Euro Quest': 'https://www.apollocamper.com/campervan-hire-new-zealand/euro-quest',
+  'Apollo Euro Camper': 'https://www.apollocamper.com/campervan-hire-new-zealand/euro-camper',
+  'Apollo Euro Deluxe': 'https://www.apollocamper.com/campervan-hire-new-zealand/euro-deluxe',
+  'Beach 4 Berth': 'https://www.maui-rentals.com/motorhome-hire-new-zealand/4-berth-campervan-beach',
+  'Cascade 4 Berth': 'https://www.maui-rentals.com/motorhome-hire-new-zealand/4-berth-campervan-cascade',
+  'River 6 Berth': 'https://www.maui-rentals.com/motorhome-hire-new-zealand/6-berth-campervan-river',
+  'Sunseeker 4 Berth': 'https://www.jucy.com/nz/en/campervans/chilld-by-jucy-4-berth-sunseeker',
+  'Condo 4 Berth': 'https://www.jucy.com/nz/en/campervans/jucy-condo',
+  'Big Kahuna 6 Berth': 'https://www.jucy.com/nz/en/campervans/chilld-big-kahuna',
+  'Polaris 4': 'https://www.starrv.com/nz/motorhome-hire-nz/4-berth-polaris',
+  'Polaris 6': 'https://www.starrv.com/nz/motorhome-hire-nz/6-berth-polaris',
+  'Double Down 4 Berth': 'https://www.mightycampers.com/campervan-hire-new-zealand/4-berth-double-down',
+  'Double Up 4 Berth': 'https://www.mightycampers.com/campervan-hire-new-zealand/4-berth-double-up',
+  'Big Six 6 Berth': 'https://www.mightycampers.com/campervan-hire-new-zealand/6-berth-big-six',
+  'Active Bunk': 'https://travel.indiecampers.com/en-us/offer/oc-active-bunk-4-manual-base?from=queenstown&to=christchurch&start=2026-11-07&end=2026-11-22',
+  'Comfort Standard Select': 'https://travel.indiecampers.com/en-us/offer/oc-comfort-standard-4-auto-select?from=queenstown&to=christchurch&start=2026-11-07&end=2026-11-22',
+  'Active Plus Select': 'https://travel.indiecampers.com/en-us/offer/oc-active-poptopnz-4-auto-select?from=queenstown&to=christchurch&start=2026-11-07&end=2026-11-22',
+  'Comfort Plus': 'https://travel.indiecampers.com/en-us/offer/oc-comfort-standardnz-5-auto-base?from=queenstown&to=christchurch&start=2026-11-07&end=2026-11-22',
+  'Family Plus': 'https://indiecampers.com/discover/en-us/rvs/oc-comfort-familynz',
+  'Active Plus': 'https://indiecampers.com/discover/en-us/rvs/oc-active-plus'
+};
+
+async function loadData(){
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('Could not reach the Google Sheet (' + res.status + ')');
+  const text = await res.text();
+  const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+  const json = JSON.parse(jsonStr);
+  const rows = json.table.rows;
+
+  dateOptions = [];
+  GROUP_STARTS.forEach((start, gIdx) => {
+    const headerRow = rows[0];
+    const startCell = getCell(headerRow, start);
+    const endCell = getCell(headerRow, start + 1);
+    const daysCell = getCell(headerRow, start + 2);
+    if(startCell.v !== null && startCell.v !== ''){
+      const startLabel = startCell.f || startCell.v;
+      const endLabel = endCell.f || endCell.v;
+      const daysLabel = daysCell.f || daysCell.v;
+      dateOptions.push({
+        groupIndex: gIdx,
+        label: `${startLabel} – ${endLabel} (${daysLabel} days)`
+      });
+    }
+  });
+
+  allRows = [];
+  const bedsSet = new Set();
+  let lastCompany = null;
+  rows.slice(2).forEach(row => {
+    if(!row) return;
+    const rawCompany = getCell(row,0).f || getCell(row,0).v;
+    if(rawCompany) lastCompany = rawCompany;
+    const vehicleRaw = getCell(row,1);
+    const vehicleName = vehicleRaw.f || vehicleRaw.v;
+    if(!vehicleName) return;
+    const company = lastCompany;
+    const vehicleLink = extractLink(vehicleRaw.v) || extractLink(vehicleRaw.f) || VEHICLE_LINKS[vehicleName] || null;
+    const type = (getCell(row,2).f || getCell(row,2).v || '').toString();
+    const transmission = (getCell(row,3).f || getCell(row,3).v || '').toString();
+    const sleeps = Number(getCell(row,4).v) || 0;
+    const beds = getCell(row,5).f || getCell(row,5).v || '';
+    if(beds) bedsSet.add(beds);
+    const sc = getBool(row,6);
+    const toilet = getBool(row,7);
+    const shower = getBool(row,8);
+
+    const prices = GROUP_STARTS.map(start => ({
+      nzd: Number(getCell(row,start).v) || null,
+      aud: Number(getCell(row,start+1).v) || null,
+      dayAud: Number(getCell(row,start+2).v) || null
+    }));
+
+    const insurance = {
+      low: getCell(row,INSURANCE_COLS[0]).v,
+      mid: getCell(row,INSURANCE_COLS[1]).v,
+      high: getCell(row,INSURANCE_COLS[2]).v
+    };
+
+    allRows.push({company, vehicleName, vehicleLink, type, transmission, sleeps, beds, sc, toilet, shower, prices, insurance});
+  });
+  bedsOptions = Array.from(bedsSet).sort();
+}
+
+function bucketColorFor(aud){
+  const i = BUCKETS.findIndex(b => aud < b.max);
+  return BUCKETS[i === -1 ? BUCKETS.length - 1 : i];
+}
+function bucketIndexFor(aud){
+  const i = BUCKETS.findIndex(b => aud < b.max);
+  return i === -1 ? BUCKETS.length - 1 : i;
+}
+
+function currentRows(){
+  const gIdx = dateOptions.length ? dateOptions[state.dateIndex].groupIndex : 0;
+  return allRows.map(r => ({...r, price: r.prices[gIdx]}));
+}
+
+function applyFiltersAndSort(rows){
+  let out = rows.filter(r => {
+    if(state.type !== 'all' && r.type.toLowerCase() !== state.type) return false;
+    if(state.transmission !== 'all' && r.transmission.toLowerCase() !== state.transmission) return false;
+    if(r.sleeps < state.sleeps) return false;
+    if(state.beds !== 'all' && r.beds !== state.beds) return false;
+    if(state.sc && !r.sc) return false;
+    if(state.toilet && !r.toilet) return false;
+    if(state.shower && !r.shower) return false;
+    if(r.price && r.price.aud !== null){
+      if(!state.buckets.has(bucketIndexFor(r.price.aud))) return false;
+    }
+    return true;
+  });
+
+  out.sort((a,b) => {
+    let av, bv;
+    switch(state.sortKey){
+      case 'company': av=a.company; bv=b.company; break;
+      case 'vehicle': av=a.vehicleName; bv=b.vehicleName; break;
+      case 'type': av=a.type; bv=b.type; break;
+      case 'transmission': av=a.transmission; bv=b.transmission; break;
+      case 'sleeps': av=a.sleeps; bv=b.sleeps; break;
+      case 'beds': av=a.beds; bv=b.beds; break;
+      case 'priceNZD': av=a.price ? a.price.nzd : null; bv=b.price ? b.price.nzd : null; break;
+      case 'priceAUD': av=a.price ? a.price.aud : null; bv=b.price ? b.price.aud : null; break;
+      case 'priceDayAUD': av=a.price ? a.price.dayAud : null; bv=b.price ? b.price.dayAud : null; break;
+      default: av=''; bv='';
+    }
+    if(av === null || av === undefined) av = state.sortDir === 'asc' ? Infinity : -Infinity;
+    if(bv === null || bv === undefined) bv = state.sortDir === 'asc' ? Infinity : -Infinity;
+    if(typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if(av < bv) return state.sortDir === 'asc' ? -1 : 1;
+    if(av > bv) return state.sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return out;
+}
+
+function fmtMoney(n){
+  if(n === null || n === undefined || isNaN(n)) return '—';
+  return Math.round(n).toLocaleString();
+}
+
+function typeBadge(type){
+  const t = type.toLowerCase();
+  if(t.includes('motor')) return `<span class="badge" style="background:var(--coral-bg);color:var(--coral-text)">${escapeHtml(type)}</span>`;
+  return `<span class="badge" style="background:var(--teal-bg);color:var(--teal-text)">${escapeHtml(type)}</span>`;
+}
+function transBadge(trans){
+  const t = trans.toLowerCase();
+  if(t.includes('man')) return `<span class="badge" style="background:var(--gold-bg);color:var(--gold-text)">${escapeHtml(trans)}</span>`;
+  return `<span class="badge" style="background:var(--lilac-bg);color:var(--lilac-text)">${escapeHtml(trans)}</span>`;
+}
+function amenityIcon(on, letter){
+  return `<span class="amenity ${on ? 'on' : 'off'}">${letter}</span>`;
+}
+
+function render(){
+  const rows = applyFiltersAndSort(currentRows());
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = rows.map(r => {
+    const vehicleCell = r.vehicleLink
+      ? `<a class="vehicle-link" href="${escapeHtml(r.vehicleLink)}" target="_blank" rel="noopener">${escapeHtml(r.vehicleName)}</a>`
+      : escapeHtml(r.vehicleName);
+    const priceAUD = r.price ? r.price.aud : null;
+    const bucket = priceAUD !== null ? bucketColorFor(priceAUD) : null;
+    const priceAUDCell = priceAUD !== null
+      ? `<span class="price-cell" style="background:${bucket.bg};color:${bucket.text}">$${fmtMoney(priceAUD)}</span>`
+      : '—';
+    return `<tr>
+      <td>${escapeHtml(r.company)}</td>
+      <td>${vehicleCell}</td>
+      <td>${typeBadge(r.type)}</td>
+      <td>${transBadge(r.transmission)}</td>
+      <td>${r.sleeps || '—'}</td>
+      <td>${escapeHtml(r.beds)}</td>
+      <td>${amenityIcon(r.sc,'SC')}${amenityIcon(r.toilet,'T')}${amenityIcon(r.shower,'S')}</td>
+      <td>${r.price ? '$' + fmtMoney(r.price.nzd) : '—'}</td>
+      <td>${priceAUDCell}</td>
+      <td>${r.price ? '$' + fmtMoney(r.price.dayAud) : '—'}</td>
+      <td>
+        <span class="insurance-tier" style="background:var(--turquoise-bg);color:var(--turquoise-text)">L $${fmtMoney(r.insurance.low)}</span>
+        <span class="insurance-tier" style="background:var(--gold-bg);color:var(--gold-text)">M $${fmtMoney(r.insurance.mid)}</span>
+        <span class="insurance-tier" style="background:var(--coral-bg);color:var(--coral-text)">H $${fmtMoney(r.insurance.high)}</span>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderBucketChips(){
+  const container = document.getElementById('bucketRow');
+  container.innerHTML = BUCKETS.map((b, i) => {
+    const active = state.buckets.has(i);
+    const style = active
+      ? `background:${b.bg};color:${b.text};border-color:${b.text}`
+      : `background:#fff;color:var(--muted);border-color:var(--border)`;
+    return `<button class="bucket-chip" data-bucket="${i}" style="${style}">${b.label}</button>`;
+  }).join('');
+  container.querySelectorAll('.bucket-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = Number(btn.dataset.bucket);
+      if(state.buckets.has(i)) state.buckets.delete(i); else state.buckets.add(i);
+      renderBucketChips();
+      render();
+    });
+  });
+}
+
+function setupControls(){
+  const dateSelect = document.getElementById('dateSelect');
+  dateSelect.innerHTML = dateOptions.map((d,i) => `<option value="${i}">${escapeHtml(d.label)}</option>`).join('');
+  dateSelect.addEventListener('change', e => { state.dateIndex = Number(e.target.value); render(); });
+
+  document.getElementById('typeSelect').addEventListener('change', e => { state.type = e.target.value; render(); });
+  document.getElementById('transSelect').addEventListener('change', e => { state.transmission = e.target.value; render(); });
+  document.getElementById('sleepsSelect').addEventListener('change', e => { state.sleeps = Number(e.target.value); render(); });
+
+  const bedsSelect = document.getElementById('bedsSelect');
+  bedsSelect.innerHTML = '<option value="all">All</option>' +
+    bedsOptions.map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)}</option>`).join('');
+  bedsSelect.addEventListener('change', e => { state.beds = e.target.value; render(); });
+
+  document.querySelectorAll('.chip[data-amenity]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const key = chip.dataset.amenity;
+      state[key] = !state[key];
+      chip.classList.toggle('active', state[key]);
+      render();
+    });
+  });
+
+  renderBucketChips();
+
+  document.querySelectorAll('th[data-key]').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      if(state.sortKey === key){
+        state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        state.sortKey = key;
+        state.sortDir = 'asc';
+      }
+      render();
+    });
+  });
+}
+
+(async function init(){
+  try{
+    await loadData();
+    setupControls();
+    render();
+    document.getElementById('status').style.display = 'none';
+    document.getElementById('tableWrap').style.display = 'block';
+  }catch(err){
+    document.getElementById('status').textContent =
+      'Could not load the sheet — make sure it\'s shared as "Anyone with the link can view", then reload this page. (' + err.message + ')';
+  }
+})();
+</script>
+
+</body>
+</html>
