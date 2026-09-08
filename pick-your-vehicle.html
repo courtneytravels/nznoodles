@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NZ Noodles Road Trip 🦜🥾🌿🚐🏔️🗺️🏕️🌌 — Pick your vehicle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#FBF6EC;
@@ -20,12 +20,12 @@
   --coral-bg:#FFD4C2; --coral-text:#A13F1E;
   --teal-bg:#A8E6DC; --teal-text:#146A5C;
   --plum-bg:#9C3868; --plum-text:#FBF6EC;
-  --babypink-bg:#FFE3ED; --babypink-border:#FFAFCF;
-  --vehiclepink-bg:#FF7FB4; --vehiclepink-border:#D63E80;
+  --babypink-bg:#FFF0F5; --babypink-border:#F9C9DC;
+  --vehiclepink-bg:#F7B8D2; --vehiclepink-border:#DB84A8;
 }
 *{box-sizing:border-box;}
 html{-webkit-text-size-adjust:100%;}
-body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;}
 .hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);}
 .hero-inner{max-width:1600px;margin:0 auto;}
 .hero h1{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:44px;margin:0 0 8px;color:#3D2350;}
@@ -54,7 +54,10 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
   #bucketRow{max-width:none;flex-wrap:nowrap;}
 }
 
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:22px;}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:22px;}
+@media (max-width:800px){
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
 .tile{border-radius:12px;padding:14px 16px;min-height:78px;}
 .tile-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:6px;}
 .tile-price{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:2px;}
@@ -65,13 +68,13 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
 .table-wrap.collapsed .col-extra{display:none;}
 table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1180px;}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
-td.wrap{white-space:normal;max-width:220px;font-size:11.5px;}
+td.wrap{white-space:normal;max-width:220px;font-size:10.5px;}
 th{cursor:pointer;font-weight:600;color:var(--heading);background:#F5EEDF;user-select:none;white-space:normal;vertical-align:bottom;}
 th:hover{color:var(--lilac-text);}
 th.col-center,td.col-center{text-align:center;}
 .tile-note{font-size:10px;margin-top:6px;opacity:0.75;}
 tbody tr:hover td{background:#FAF7EF;}
-.badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:8px;font-weight:500;}
+.badge{display:inline-block;font-size:10.5px;padding:3px 9px;border-radius:8px;font-weight:500;}
 .amenity{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:11px;margin-right:4px;font-weight:600;}
 .amenity.on{background:var(--turquoise-bg);color:var(--turquoise-text);}
 .amenity.off{background:#EFEAE0;color:var(--muted);}
@@ -100,6 +103,21 @@ tr.chosen-row td{background:#F3ECFA;}
 .cal-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
 .cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--ink);}
 .cal-legend .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+
+.receipt-wrap{max-width:400px;margin:22px auto;}
+.receipt-edge{height:11px;background:linear-gradient(-45deg,#FFFDF8 6px,transparent 6px) 0 0,linear-gradient(45deg,#FFFDF8 6px,transparent 6px) 0 0;background-size:12px 12px;background-repeat:repeat-x;}
+.receipt-edge.bottom{transform:rotate(180deg);}
+.receipt{background:#FFFDF8;padding:22px 26px;font-family:'Courier Prime','Courier New',monospace;font-size:12.5px;color:#3A362E;box-shadow:0 8px 22px rgba(58,54,46,0.14);line-height:1.55;}
+.receipt .r-head{text-align:center;margin-bottom:10px;}
+.receipt .r-title{font-weight:700;font-size:15px;letter-spacing:0.04em;}
+.receipt .r-sub{font-size:11px;color:var(--muted);}
+.receipt hr{border:none;border-top:1px dashed #C9C2B0;margin:10px 0;}
+.receipt .r-line{display:flex;justify-content:space-between;gap:8px;}
+.receipt .r-sub-line{display:flex;justify-content:space-between;gap:8px;padding-left:14px;font-size:11px;color:var(--muted);}
+.receipt .r-section-label{font-weight:700;letter-spacing:0.03em;font-size:11.5px;margin-bottom:2px;}
+.receipt .r-total{font-weight:700;font-size:13.5px;}
+.receipt .r-balance{text-align:center;font-weight:700;font-size:14px;margin-top:10px;padding-top:10px;border-top:2px dashed #C9C2B0;letter-spacing:0.03em;}
+.receipt .r-foot{text-align:center;font-size:11px;color:var(--muted);margin-top:10px;font-style:italic;}
 
 @media (max-width:1150px){
   .page-layout{flex-direction:column;padding:16px;gap:20px;}
@@ -201,8 +219,8 @@ tr.chosen-row td{background:#F3ECFA;}
             <th data-key="priceAUD" class="col-extra">Price</th>
             <th data-key="priceDayAUD" class="col-extra">Per day</th>
             <th data-key="insurance" class="col-extra">Insurance total — est.*</th>
-            <th data-key="grandTotal" class="col-center" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">Grand total — est.*</th>
-            <th data-key="grandTotalDay" class="col-center">Grand total/day — est.*</th>
+            <th data-key="grandTotal" class="col-center" style="max-width:90px" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">Grand total — est.*</th>
+            <th data-key="grandTotalDay" class="col-center" style="max-width:90px">Grand total/day — est.*</th>
             <th>Split</th>
           </tr>
         </thead>
@@ -221,7 +239,7 @@ tr.chosen-row td{background:#F3ECFA;}
 </div>
 
 <div class="page-layout" id="page-split" style="display:none">
-  <div class="left-col" style="max-width:820px">
+  <div class="left-col">
     <div class="controls">
       <div class="control-group">
         <span class="control-label">Chosen vehicle</span>
@@ -242,6 +260,12 @@ tr.chosen-row td{background:#F3ECFA;}
     <button class="chip" id="addTravellerBtn" style="margin:4px 0 18px">+ Add traveller</button>
 
     <div id="splitContent"></div>
+
+    <div class="receipt-wrap" id="receiptWrap" style="display:none">
+      <div class="receipt-edge"></div>
+      <div class="receipt" id="receiptContent"></div>
+      <div class="receipt-edge bottom"></div>
+    </div>
 
     <div class="calendar">
       <p class="split-summary" style="margin:18px 0 10px;padding:10px 16px;font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:16px;color:var(--heading)" id="calendarTitle">November</p>
@@ -452,10 +476,8 @@ async function loadData(){
 
   const defaultGroup = dateOptions.find(g => dateKey(g.startDate) === state.pickup && dateKey(g.endDate) === state.dropoff);
   const fullReturn = defaultGroup ? toISODate(defaultGroup.endDate) : '';
-  const earlyOpt = dropoffOptions.find(o => o.date.getDate() === 23);
-  const earlyReturn = earlyOpt ? toISODate(earlyOpt.date) : fullReturn;
   state.travellers = [
-    {name:'', returnDate: earlyReturn},
+    {name:'', returnDate: fullReturn},
     {name:'', returnDate: fullReturn},
     {name:'', returnDate: fullReturn},
     {name:'', returnDate: fullReturn}
@@ -483,10 +505,16 @@ async function loadData(){
     const toilet = getBool(row,7);
     const shower = getBool(row,8);
 
-    const prices = GROUP_STARTS.map(start => ({
-      aud: Number(getCell(row,start+1).v) || null,
-      dayAud: Number(getCell(row,start+2).v) || null
-    }));
+    const prices = GROUP_STARTS.map(start => {
+      const audCell = getCell(row, start + 1);
+      const rawText = (audCell.f || audCell.v || '').toString();
+      const soldOut = /sold\s*out/i.test(rawText);
+      return {
+        aud: Number(audCell.v) || null,
+        dayAud: Number(getCell(row,start+2).v) || null,
+        soldOut
+      };
+    });
 
     const insurance = {
       avgDayAud: Number(getCell(row,INSURANCE_AVG_DAY_AUD_COL).v)
@@ -682,21 +710,23 @@ function render(){
   const gtMax = gtVals.length ? Math.max(...gtVals) : 0;
 
   const tbody = document.getElementById('tbody');
+  const soldOutTag = '<span style="font-size:9.5px;font-weight:700;letter-spacing:0.02em;color:var(--coral-text)">SOLD OUT</span>';
   tbody.innerHTML = rows.map(r => {
     const vehicleCell = r.vehicleLink
       ? `<a class="vehicle-link" href="${escapeHtml(r.vehicleLink)}" target="_blank" rel="noopener">${escapeHtml(r.vehicleName)}</a>`
       : escapeHtml(r.vehicleName);
 
+    const isSoldOut = !!(r.price && r.price.soldOut);
     const priceAUD = r.price ? r.price.aud : null;
     const priceCell = priceAUD !== null
       ? `<span class="price-cell" style="${heatStyleFor(priceAUD, priceMin, priceMax)}">$${fmtMoney(priceAUD)}</span>`
-      : '—';
+      : (isSoldOut ? soldOutTag : '—');
     const insCell = r.insuranceTotal !== null
       ? `<span class="price-cell" style="${heatStyleFor(r.insuranceTotal, insMin, insMax)}">$${fmtMoney(r.insuranceTotal)}</span>`
-      : '—';
+      : (isSoldOut ? soldOutTag : '—');
     const gtCell = r.grandTotal !== null
       ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)}" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">$${fmtMoney(r.grandTotal)}</span>`
-      : '—';
+      : (isSoldOut ? soldOutTag : '—');
 
     return `<tr class="${r.rowKey === state.chosenKey ? 'chosen-row' : ''}">
       <td>${escapeHtml(r.company)}</td>
@@ -707,10 +737,10 @@ function render(){
       <td class="wrap col-center">${escapeHtml(r.beds)}</td>
       <td class="col-center">${amenityIcon(r.toilet,'T')}${amenityIcon(r.shower,'S')}</td>
       <td class="col-extra">${priceCell}</td>
-      <td class="col-extra">${r.price ? '$' + fmtMoney(r.price.dayAud) : '—'}</td>
+      <td class="col-extra">${priceAUD !== null ? '$' + fmtMoney(r.price.dayAud) : (isSoldOut ? soldOutTag : '—')}</td>
       <td class="col-extra">${insCell}</td>
       <td class="col-center">${gtCell}</td>
-      <td class="col-center">${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : '—'}</td>
+      <td class="col-center">${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : (isSoldOut ? soldOutTag : '—')}</td>
       <td><button class="choose-btn" data-key="${escapeHtml(r.rowKey)}">${r.rowKey === state.chosenKey ? 'Chosen ✓' : 'Choose →'}</button></td>
     </tr>`;
   }).join('');
@@ -948,6 +978,7 @@ function renderSplit(){
     tilesEl.innerHTML = '';
     summaryEl.innerHTML = '';
     container.innerHTML = `<div class="split-summary"><p>Choose a vehicle — either from this dropdown, or hit "Choose →" on any row in the Pick your vehicle tab.</p></div>`;
+    document.getElementById('receiptWrap').style.display = 'none';
     renderCalendar(null);
     return;
   }
@@ -961,6 +992,7 @@ function renderSplit(){
     tilesEl.innerHTML = '';
     summaryEl.innerHTML = `<h3>${escapeHtml(chosenBase.vehicleName)}</h3><p>${escapeHtml(chosenBase.company)}</p><p style="margin-top:8px">Pricing isn't available for this vehicle on the currently selected pick up / drop off dates.</p>`;
     container.innerHTML = '';
+    document.getElementById('receiptWrap').style.display = 'none';
     renderCalendar(null);
     return;
   }
@@ -1031,6 +1063,41 @@ function renderSplit(){
     <div class="split-cards">${cardsHtml}</div>
     <p style="font-size:12px;color:var(--muted);margin-top:10px">Owed across all travellers: $${fmtMoney(sumTotals)} (grand total $${fmtMoney(chosen.grandTotal)})</p>
   `;
+
+  const vehicleDay = chosen.price ? chosen.price.dayAud : null;
+  const contribLines = state.travellers.map((t, i) =>
+    `<div class="r-line"><span>${escapeHtml(t.name || 'Traveller ' + (i+1))}</span><span>$${fmtMoney(totals[i])}</span></div>`
+  ).join('');
+  const rawBalance = chosen.grandTotal - sumTotals;
+  const balanceDisplay = Math.abs(rawBalance) < 0.005 ? '$0.00' : (rawBalance > 0 ? '$' : '-$') + Math.abs(rawBalance).toFixed(2);
+
+  document.getElementById('receiptContent').innerHTML = `
+    <div class="r-head">
+      <div class="r-title">NZ NOODLES</div>
+      <div class="r-sub">Vehicle Hire Receipt</div>
+    </div>
+    <hr>
+    <div class="r-line"><strong>${escapeHtml(chosenBase.vehicleName)}</strong></div>
+    <div class="r-sub">${escapeHtml(chosenBase.company)}</div>
+    <div class="r-sub">${formatDateLabel(group.startDate)} — ${formatDateLabel(group.endDate)} (${totalDays} days)</div>
+    <hr>
+    <div class="r-section-label">VEHICLE HIRE</div>
+    <div class="r-line"><span>Total</span><span>$${fmtMoney(priceAud)}</span></div>
+    <div class="r-sub-line"><span>Per day</span><span>$${fmtMoney(vehicleDay)}</span></div>
+    <div class="r-section-label" style="margin-top:8px">INSURANCE (estimate)</div>
+    <div class="r-line"><span>Total</span><span>$${fmtMoney(chosen.insuranceTotal)}</span></div>
+    <div class="r-sub-line"><span>Per day</span><span>$${fmtMoney(chosen.insurancePerDayAud)}</span></div>
+    <hr>
+    <div class="r-line r-total"><span>GRAND TOTAL</span><span>$${fmtMoney(chosen.grandTotal)}</span></div>
+    <div class="r-sub-line"><span>Per day</span><span>$${fmtMoney(chosen.grandTotalDay)}</span></div>
+    <hr>
+    <div class="r-section-label">CONTRIBUTIONS</div>
+    ${contribLines}
+    <div class="r-balance">OUTSTANDING BALANCE: ${balanceDisplay}</div>
+    <div class="r-foot">*** Thanks for choosing NZ Noodles ***</div>
+  `;
+  document.getElementById('receiptWrap').style.display = 'block';
+
   renderCalendar(group);
 }
 
