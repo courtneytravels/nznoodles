@@ -20,6 +20,8 @@
   --coral-bg:#FFD4C2; --coral-text:#A13F1E;
   --teal-bg:#A8E6DC; --teal-text:#146A5C;
   --plum-bg:#9C3868; --plum-text:#FBF6EC;
+  --babypink-bg:#FFE3ED; --babypink-border:#FFAFCF;
+  --vehiclepink-bg:#FF7FB4; --vehiclepink-border:#D63E80;
 }
 *{box-sizing:border-box;}
 html{-webkit-text-size-adjust:100%;}
@@ -89,7 +91,8 @@ tr.chosen-row td{background:#F3ECFA;}
 .cal-weekday{font-size:10px;font-weight:600;color:var(--muted);text-align:center;text-transform:uppercase;padding-bottom:2px;}
 .cal-day{border-radius:8px;border:1px solid var(--border);background:#fff;min-height:54px;padding:4px 5px;}
 .cal-day.cal-empty{border:none;background:transparent;}
-.cal-day.cal-in-trip{background:#F3ECFA;border-color:var(--lilac-text);}
+.cal-day.cal-pre-pickup{background:var(--babypink-bg);border-color:var(--babypink-border);}
+.cal-day.cal-in-trip{background:var(--vehiclepink-bg);border-color:var(--vehiclepink-border);}
 .cal-daynum{font-size:11px;color:var(--ink);font-weight:600;}
 .cal-dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
 .cal-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
@@ -450,7 +453,7 @@ async function loadData(){
   const earlyOpt = dropoffOptions.find(o => o.date.getDate() === 23);
   const earlyReturn = earlyOpt ? toISODate(earlyOpt.date) : fullReturn;
   state.travellers = [
-    {name:'You', returnDate: earlyReturn},
+    {name:'', returnDate: earlyReturn},
     {name:'', returnDate: fullReturn},
     {name:'', returnDate: fullReturn},
     {name:'', returnDate: fullReturn}
@@ -860,6 +863,10 @@ function renderCalendar(group){
   if(!grid) return;
   if(!group){ grid.innerHTML = ''; if(legend) legend.innerHTML = ''; return; }
 
+  // Everyone is treated as being in NZ from the earliest possible pick-up date
+  // onward, regardless of which pick-up date is actually selected for the vehicle.
+  const arrivalDate = pickupOptions.length ? pickupOptions[0].date : group.startDate;
+
   const year = group.startDate.getFullYear();
   const monthIndex = group.startDate.getMonth();
   const monthStart = new Date(year, monthIndex, 1);
@@ -871,15 +878,17 @@ function renderCalendar(group){
   for(let i = 0; i < startWeekday; i++) cells += `<div class="cal-day cal-empty"></div>`;
   for(let d = 1; d <= daysInMonth; d++){
     const day = new Date(year, monthIndex, d);
-    const inTrip = day >= group.startDate && day < group.endDate;
+    const inVehicleTrip = day >= group.startDate && day <= group.endDate;
+    const inPrePickup = !inVehicleTrip && day >= arrivalDate && day < group.startDate;
+    const dayClass = inVehicleTrip ? 'cal-in-trip' : (inPrePickup ? 'cal-pre-pickup' : '');
     const dots = state.travellers.map((t, i) => {
-      const ret = clampDate(t.returnDate ? fromISODate(t.returnDate) : group.endDate, group.startDate, group.endDate);
-      const present = day >= group.startDate && day < ret;
+      const ret = clampDate(t.returnDate ? fromISODate(t.returnDate) : group.endDate, arrivalDate, group.endDate);
+      const present = day >= arrivalDate && day < ret;
       if(!present) return '';
       const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
       return `<span class="cal-dot" style="background:${c.text}" title="${escapeHtml(t.name || 'Traveller ' + (i+1))}"></span>`;
     }).join('');
-    cells += `<div class="cal-day ${inTrip ? 'cal-in-trip' : ''}">
+    cells += `<div class="cal-day ${dayClass}">
       <div class="cal-daynum">${d}</div>
       <div class="cal-dots">${dots}</div>
     </div>`;
@@ -887,10 +896,13 @@ function renderCalendar(group){
   grid.innerHTML = cells;
 
   if(legend){
-    legend.innerHTML = state.travellers.map((t, i) => {
+    const dayLegend = `<span><span class="dot" style="background:var(--vehiclepink-border)"></span>Vehicle days</span>` +
+      `<span><span class="dot" style="background:var(--babypink-border)"></span>In NZ before pick-up</span>`;
+    const travellerLegend = state.travellers.map((t, i) => {
       const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
       return `<span><span class="dot" style="background:${c.text}"></span>${escapeHtml(t.name || 'Traveller ' + (i+1))}</span>`;
     }).join('');
+    legend.innerHTML = dayLegend + travellerLegend;
   }
 }
 
@@ -991,7 +1003,7 @@ function renderSplit(){
   const barHtml = state.travellers.map((t, i) => {
     const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
     const pct = chosen.grandTotal ? Math.max(1, (totals[i] / chosen.grandTotal) * 100) : 0;
-    return `<div style="background:${c.text};width:${pct}%">${escapeHtml(t.name || 'T' + (i+1))}</div>`;
+    return `<div style="background:${c.bg};color:${c.text};width:${pct}%">${escapeHtml(t.name || 'Traveller ' + (i+1))}</div>`;
   }).join('');
 
   const cardsHtml = state.travellers.map((t, i) => {
