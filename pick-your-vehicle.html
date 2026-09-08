@@ -203,6 +203,10 @@ tr.chosen-row td{background:#F3ECFA;}
         <div class="chip" id="tripLengthBadge" style="cursor:default;background:var(--teal-bg);color:var(--teal-text);border-color:var(--teal-text)"></div>
       </div>
       <div class="control-group">
+        <span class="control-label">Company</span>
+        <div class="chip-row" id="companyChips" style="max-width:480px"></div>
+      </div>
+      <div class="control-group">
         <span class="control-label">Type</span>
         <div class="chip-row" id="typeChips"></div>
       </div>
@@ -333,6 +337,7 @@ let allRows = [];
 let dateOptions = [];
 let pickupOptions = [];
 let dropoffOptions = [];
+let companyOptions = [];
 let typeOptions = [];
 let transOptions = [];
 let sleepsOptions = [];
@@ -342,6 +347,7 @@ let state = {
   dropoff: null,
   chosenKey: null,
   travellers: [],
+  companies: new Set(),
   types: new Set(),
   transmissions: new Set(),
   sleepsVals: new Set(),
@@ -425,11 +431,15 @@ function formatDateLabel(d){
 function parseBedCount(str){
   if(!str) return 0;
   const firstClause = String(str).split(/\bOR\b/i)[0];
-  let total = 0, matched = false;
+  let total = 0;
   const re = /(\d+)\s*(double|single|bunk)/gi;
   let m;
-  while((m = re.exec(firstClause))){ total += Number(m[1]); matched = true; }
-  if(!matched && /bunk/i.test(firstClause)) total = 2;
+  while((m = re.exec(firstClause))){ total += Number(m[1]); }
+  // "bunks" mentioned without its own leading number (e.g. "2 doubles + bunks") still adds beds —
+  // count that as 2 unless a number was already attached to "bunk(s)" and captured above.
+  if(/bunk/i.test(firstClause) && !/\d+\s*bunks?\b/i.test(firstClause)){
+    total += 2;
+  }
   return total;
 }
 function bedCategoryFor(str){
@@ -513,7 +523,7 @@ async function loadData(){
   ];
 
   allRows = [];
-  const typeSet = new Set(), transSet = new Set(), sleepsSet = new Set();
+  const typeSet = new Set(), transSet = new Set(), sleepsSet = new Set(), companySet = new Set();
   let lastCompany = null;
   rows.slice(2).forEach(row => {
     if(!row) return;
@@ -528,6 +538,7 @@ async function loadData(){
     const transmission = (getCell(row,3).f || getCell(row,3).v || '').toString();
     const sleeps = Number(getCell(row,4).v) || 0;
     const beds = getCell(row,5).f || getCell(row,5).v || '';
+    if(company) companySet.add(company);
     if(type) typeSet.add(type);
     if(transmission) transSet.add(transmission);
     if(sleeps) sleepsSet.add(sleeps);
@@ -553,6 +564,7 @@ async function loadData(){
     allRows.push({rowKey, company, vehicleName, vehicleLink, type, transmission, sleeps, beds, toilet, shower, prices, insurance});
   });
 
+  companyOptions = Array.from(companySet).sort();
   typeOptions = Array.from(typeSet).sort();
   transOptions = Array.from(transSet).sort();
   sleepsOptions = Array.from(sleepsSet).sort((a,b) => a - b);
@@ -617,9 +629,10 @@ function heatStyleFor(value, min, max){
 
 function applyFiltersAndSort(rows){
   let out = rows.filter(r => {
+    if(state.companies.size && !state.companies.has(r.company)) return false;
     if(state.types.size && !state.types.has(r.type)) return false;
     if(state.transmissions.size && !state.transmissions.has(r.transmission)) return false;
-    if(state.sleepsVals.size && !state.sleepsVals.has(r.sleeps)) return false;
+    if(state.sleepsVals.size && !Array.from(state.sleepsVals).some(min => r.sleeps >= min)) return false;
     if(state.bedsCategory.size && !state.bedsCategory.has(bedCategoryFor(r.beds))) return false;
     if(state.toilet && !r.toilet) return false;
     if(state.shower && !r.shower) return false;
@@ -1141,9 +1154,10 @@ function renderSplit(){
 
 function setupControls(){
   renderDateChips();
+  renderToggleGroup('companyChips', companyOptions, state.companies, () => ({bg:'var(--lilac-bg)', text:'var(--lilac-text)'}));
   renderToggleGroup('typeChips', typeOptions, state.types, typeColor);
   renderToggleGroup('transChips', transOptions, state.transmissions, transColor);
-  renderToggleGroup('sleepsChips', sleepsOptions, state.sleepsVals, () => ({bg:'var(--lilac-bg)', text:'var(--lilac-text)'}));
+  renderToggleGroup('sleepsChips', sleepsOptions, state.sleepsVals, () => ({bg:'var(--lilac-bg)', text:'var(--lilac-text)'}), v => v + '+');
   renderToggleGroup('bedsChips', ['2','3plus'], state.bedsCategory, () => ({bg:'var(--coral-bg)', text:'var(--coral-text)'}), v => v === '2' ? '2 beds' : '3 beds+');
   renderAmenityChips();
   renderBucketChips();
