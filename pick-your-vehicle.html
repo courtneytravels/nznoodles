@@ -43,17 +43,22 @@ nav.tabs button.active{color:var(--heading);border-bottom-color:var(--teal-text)
 select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--ink);}
 .chip-row{display:flex;gap:6px;flex-wrap:wrap;max-width:340px;}
 .chip{font-family:'Inter';font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-weight:500;border:1px solid var(--border);background:#fff;color:var(--muted);}
+#bedsChips{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;max-width:480px;}
+#bedsChips .chip{white-space:normal;text-align:left;font-size:10.5px;line-height:1.25;padding:6px 10px;}
+#bucketRow{max-width:none;flex-wrap:nowrap;}
+#bucketRow .chip{white-space:nowrap;}
 
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
 .tile{border-radius:12px;padding:14px 16px;min-height:78px;}
 .tile-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:6px;}
-.tile-price{font-family:'Fraunces',serif;font-size:22px;font-weight:500;margin-bottom:2px;}
+.tile-price{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:2px;}
+.tile-perday{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;}
 .tile-sub{font-size:12px;opacity:0.85;}
 
 .table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
 table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1080px;}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
-td.wrap{white-space:normal;max-width:220px;}
+td.wrap{white-space:normal;max-width:220px;font-size:11.5px;}
 th{cursor:pointer;font-weight:600;color:var(--heading);background:#F5EEDF;user-select:none;}
 th:hover{color:var(--lilac-text);}
 tbody tr:hover td{background:#FAF7EF;}
@@ -94,8 +99,16 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
   <div class="left-col">
     <div class="controls">
       <div class="control-group">
-        <span class="control-label">Trip dates</span>
-        <select id="dateSelect"></select>
+        <span class="control-label">Pick up</span>
+        <div class="chip-row" id="pickupChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Drop off</span>
+        <div class="chip-row" id="dropoffChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Trip length</span>
+        <div class="chip" id="tripLengthBadge" style="cursor:default;background:var(--teal-bg);color:var(--teal-text);border-color:var(--teal-text)"></div>
       </div>
       <div class="control-group">
         <span class="control-label">Type</span>
@@ -173,13 +186,16 @@ const BUCKETS = [
 
 let allRows = [];
 let dateOptions = [];
+let pickupOptions = [];
+let dropoffOptions = [];
 let bedsOptions = [];
 let typeOptions = [];
 let transOptions = [];
 let sleepsOptions = [];
 
 let state = {
-  dateIndex: 0,
+  pickup: null,
+  dropoff: null,
   types: new Set(),
   transmissions: new Set(),
   sleepsVals: new Set(),
@@ -209,6 +225,18 @@ function extractLink(raw){
   if(!raw) return null;
   const m = String(raw).match(/https?:\/\/[^\s")]+/);
   return m ? m[0] : null;
+}
+function parseGvizDate(raw){
+  if(typeof raw !== 'string') return null;
+  const m = raw.match(/Date\((\d+),(\d+),(\d+)\)/);
+  if(!m) return null;
+  return new Date(Number(m[1]), Number(m[2]), Number(m[3]));
+}
+function dateKey(d){ return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
+const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function formatDateLabel(d){
+  return `${WEEKDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
 }
 function parseBedCount(str){
   if(!str) return 0;
@@ -267,16 +295,26 @@ async function loadData(){
     const startCell = getCell(headerRow, start);
     const endCell = getCell(headerRow, start + 1);
     const daysCell = getCell(headerRow, start + 2);
-    if(startCell.v !== null && startCell.v !== ''){
-      const startLabel = startCell.f || startCell.v;
-      const endLabel = endCell.f || endCell.v;
-      const daysLabel = daysCell.f || daysCell.v;
+    const startDate = parseGvizDate(startCell.v);
+    const endDate = parseGvizDate(endCell.v);
+    if(startDate && endDate){
       dateOptions.push({
         groupIndex: gIdx,
-        label: `${startLabel} – ${endLabel} (${daysLabel} days)`
+        startDate, endDate,
+        days: Number(daysCell.v) || Number(daysCell.f) || null
       });
     }
   });
+
+  const pMap = new Map(), dMap = new Map();
+  dateOptions.forEach(g => {
+    pMap.set(dateKey(g.startDate), g.startDate);
+    dMap.set(dateKey(g.endDate), g.endDate);
+  });
+  pickupOptions = Array.from(pMap.entries()).map(([key,date]) => ({key, date})).sort((a,b) => a.date - b.date);
+  dropoffOptions = Array.from(dMap.entries()).map(([key,date]) => ({key, date})).sort((a,b) => a.date - b.date);
+  state.pickup = pickupOptions[0] ? pickupOptions[0].key : null;
+  state.dropoff = dropoffOptions[0] ? dropoffOptions[0].key : null;
 
   allRows = [];
   const bedsSet = new Set(), typeSet = new Set(), transSet = new Set(), sleepsSet = new Set();
@@ -339,9 +377,37 @@ function bucketIndexFor(aud){
   return i === -1 ? BUCKETS.length - 1 : i;
 }
 
+function findGroupForSelection(){
+  return dateOptions.find(g => dateKey(g.startDate) === state.pickup && dateKey(g.endDate) === state.dropoff) || null;
+}
+
 function currentRows(){
-  const gIdx = dateOptions.length ? dateOptions[state.dateIndex].groupIndex : 0;
+  const group = findGroupForSelection();
+  const gIdx = group ? group.groupIndex : 0;
   return allRows.map(r => ({...r, price: r.prices[gIdx]}));
+}
+
+const HEAT_STOPS = [
+  {t:0, rgb:[16,190,186]},
+  {t:0.33, rgb:[255,182,72]},
+  {t:0.66, rgb:[255,122,77]},
+  {t:1, rgb:[156,56,104]}
+];
+function heatColor(t){
+  t = Math.max(0, Math.min(1, t));
+  for(let i = 0; i < HEAT_STOPS.length - 1; i++){
+    const a = HEAT_STOPS[i], b = HEAT_STOPS[i+1];
+    if(t >= a.t && t <= b.t){
+      const lt = (t - a.t) / ((b.t - a.t) || 1);
+      return a.rgb.map((c, idx) => Math.round(c + (b.rgb[idx] - c) * lt));
+    }
+  }
+  return HEAT_STOPS[HEAT_STOPS.length - 1].rgb;
+}
+function rgbCss(rgb){ return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`; }
+function heatTextColor(rgb){
+  const lum = 0.299*rgb[0] + 0.587*rgb[1] + 0.114*rgb[2];
+  return lum > 150 ? '#3A362E' : '#FBF6EC';
 }
 
 function applyFiltersAndSort(rows){
@@ -417,19 +483,28 @@ function computeTiles(rows){
   const twoPlus = priced.filter(r => parseBedCount(r.beds) > 2);
   const cheapest2 = twoPlus.length ? twoPlus.reduce((a,b) => b.price.aud < a.price.aud ? b : a) : null;
   const avg = priced.reduce((s,r) => s + r.price.aud, 0) / priced.length;
+  const avgDay = priced.reduce((s,r) => s + (r.price.dayAud || 0), 0) / priced.length;
   const highest = priced.reduce((a,b) => b.price.aud > a.price.aud ? b : a);
-  return {cheapest, cheapest2, avg, highest};
+  return {cheapest, cheapest2, avg, avgDay, highest};
 }
 
-function renderTiles(rows){
+function selectedInsuranceKey(){
+  const day = state.dropoff ? Number(state.dropoff.split('-')[2]) : null;
+  if(day === 22 || day === 23) return 'est16';
+  if(day === 27 || day === 28) return 'est21';
+  return 'est16';
+}
+
+function renderTiles(rows, days){
   const container = document.getElementById('tilesRow');
   const t = computeTiles(rows);
   if(!t){ container.innerHTML = ''; return; }
+  const dTxt = days ? ` (${days}d)` : '';
   const optionTile = (label, bg, text, row) => {
     if(!row) return `<div class="tile" style="background:${bg}"><div class="tile-label" style="color:${text}">${label}</div><div class="tile-price" style="color:${text}">—</div></div>`;
     return `<div class="tile" style="background:${bg}">
       <div class="tile-label" style="color:${text}">${label}</div>
-      <div class="tile-price" style="color:${text}">$${fmtMoney(row.price.aud)}</div>
+      <div class="tile-price" style="color:${text}">$${fmtMoney(row.price.aud)}<span class="tile-perday" style="color:${text}"> · $${fmtMoney(row.price.dayAud)}/day${dTxt}</span></div>
       <div class="tile-sub" style="color:${text}">${escapeHtml(row.vehicleName)} · ${escapeHtml(row.company)}</div>
     </div>`;
   };
@@ -438,24 +513,36 @@ function renderTiles(rows){
     optionTile('Cheapest, >2 beds', 'var(--lilac-bg)', 'var(--lilac-text)', t.cheapest2) +
     `<div class="tile" style="background:var(--gold-bg)">
       <div class="tile-label" style="color:var(--gold-text)">Average price</div>
-      <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(t.avg)}</div>
+      <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(t.avg)}<span class="tile-perday" style="color:var(--gold-text)"> · $${fmtMoney(t.avgDay)}/day${dTxt}</span></div>
       <div class="tile-sub" style="color:var(--gold-text)">Across ${document.getElementById('tbody').children.length} matching vehicles</div>
     </div>` +
     optionTile('Highest price option', 'var(--plum-bg)', 'var(--plum-text)', t.highest);
 }
 
 function render(){
+  const group = findGroupForSelection();
+  const days = group ? group.days : null;
   const rows = applyFiltersAndSort(currentRows());
+
+  const pricedAud = rows.map(r => r.price && r.price.aud !== null ? r.price.aud : null).filter(v => v !== null);
+  const heatMin = pricedAud.length ? Math.min(...pricedAud) : 0;
+  const heatMax = pricedAud.length ? Math.max(...pricedAud) : 0;
+  const estKey = selectedInsuranceKey();
+  const estLabel = estKey === 'est16' ? '16-day est.' : '21-day est.';
+  const estColor = estKey === 'est16' ? {bg:'var(--teal-bg)', text:'var(--teal-text)'} : {bg:'var(--pink-bg)', text:'var(--pink-text)'};
+
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = rows.map(r => {
     const vehicleCell = r.vehicleLink
       ? `<a class="vehicle-link" href="${escapeHtml(r.vehicleLink)}" target="_blank" rel="noopener">${escapeHtml(r.vehicleName)}</a>`
       : escapeHtml(r.vehicleName);
     const priceAUD = r.price ? r.price.aud : null;
-    const bucket = priceAUD !== null ? bucketColorFor(priceAUD) : null;
-    const priceAUDCell = priceAUD !== null
-      ? `<span class="price-cell" style="background:${bucket.bg};color:${bucket.text}">$${fmtMoney(priceAUD)}</span>`
-      : '—';
+    let priceAUDCell = '—';
+    if(priceAUD !== null){
+      const t = heatMax > heatMin ? (priceAUD - heatMin) / (heatMax - heatMin) : 0.4;
+      const rgb = heatColor(t);
+      priceAUDCell = `<span class="price-cell" style="background:${rgbCss(rgb)};color:${heatTextColor(rgb)}">$${fmtMoney(priceAUD)}</span>`;
+    }
     return `<tr>
       <td>${escapeHtml(r.company)}</td>
       <td>${vehicleCell}</td>
@@ -468,15 +555,16 @@ function render(){
       <td>${priceAUDCell}</td>
       <td>${r.price ? '$' + fmtMoney(r.price.dayAud) : '—'}</td>
       <td>
-        <span class="insurance-tier" style="background:var(--turquoise-bg);color:var(--turquoise-text)">L $${fmtMoney(r.insurance.low)}</span>
-        <span class="insurance-tier" style="background:var(--gold-bg);color:var(--gold-text)">M $${fmtMoney(r.insurance.mid)}</span>
-        <span class="insurance-tier" style="background:var(--coral-bg);color:var(--coral-text)">H $${fmtMoney(r.insurance.high)}</span><br>
-        <span class="insurance-tier" style="background:var(--teal-bg);color:var(--teal-text)">16d $${fmtMoney(r.insurance.est16)}</span>
-        <span class="insurance-tier" style="background:var(--pink-bg);color:var(--pink-text)">21d $${fmtMoney(r.insurance.est21)}</span>
+        <span class="insurance-tier" style="background:${estColor.bg};color:${estColor.text}">${estLabel} $${fmtMoney(r.insurance[estKey])}</span>
       </td>
     </tr>`;
   }).join('');
-  renderTiles(rows);
+  renderTiles(rows, days);
+
+  const badge = document.getElementById('tripLengthBadge');
+  if(badge){
+    badge.textContent = days ? `${days} days selected` : 'Select pick up + drop off';
+  }
 }
 
 function renderToggleGroup(containerId, values, selectedSet, colorFn, labelFn){
@@ -543,11 +631,34 @@ function renderAmenityChips(){
   });
 }
 
-function setupControls(){
-  const dateSelect = document.getElementById('dateSelect');
-  dateSelect.innerHTML = dateOptions.map((d,i) => `<option value="${i}">${escapeHtml(d.label)}</option>`).join('');
-  dateSelect.addEventListener('change', e => { state.dateIndex = Number(e.target.value); render(); });
+function renderDateChips(){
+  const pContainer = document.getElementById('pickupChips');
+  pContainer.innerHTML = pickupOptions.map(o => {
+    const active = o.key === state.pickup;
+    const style = active
+      ? `background:var(--lilac-bg);color:var(--lilac-text);border-color:var(--lilac-text)`
+      : `background:#fff;color:var(--muted);border-color:var(--border)`;
+    return `<button class="chip" data-key="${o.key}" style="${style}">${formatDateLabel(o.date)}</button>`;
+  }).join('');
+  pContainer.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => { state.pickup = btn.dataset.key; renderDateChips(); render(); });
+  });
 
+  const dContainer = document.getElementById('dropoffChips');
+  dContainer.innerHTML = dropoffOptions.map(o => {
+    const active = o.key === state.dropoff;
+    const style = active
+      ? `background:var(--coral-bg);color:var(--coral-text);border-color:var(--coral-text)`
+      : `background:#fff;color:var(--muted);border-color:var(--border)`;
+    return `<button class="chip" data-key="${o.key}" style="${style}">${formatDateLabel(o.date)}</button>`;
+  }).join('');
+  dContainer.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => { state.dropoff = btn.dataset.key; renderDateChips(); render(); });
+  });
+}
+
+function setupControls(){
+  renderDateChips();
   renderToggleGroup('typeChips', typeOptions, state.types, typeColor);
   renderToggleGroup('transChips', transOptions, state.transmissions, transColor);
   renderToggleGroup('sleepsChips', sleepsOptions, state.sleepsVals, () => ({bg:'var(--lilac-bg)', text:'var(--lilac-text)'}));
