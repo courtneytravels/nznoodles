@@ -43,8 +43,8 @@ nav.tabs button.active{color:var(--heading);border-bottom-color:var(--teal-text)
 select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--ink);}
 .chip-row{display:flex;gap:6px;flex-wrap:wrap;max-width:340px;}
 .chip{font-family:'Inter';font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-weight:500;border:1px solid var(--border);background:#fff;color:var(--muted);}
-#bedsChips{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;max-width:480px;}
-#bedsChips .chip{white-space:normal;text-align:left;font-size:10.5px;line-height:1.25;padding:6px 10px;}
+#bedsChips{max-width:520px;}
+#bedsChips .chip{white-space:normal;text-align:left;font-size:11px;line-height:1.3;padding:4px 10px;}
 #bucketRow{max-width:none;flex-wrap:nowrap;}
 #bucketRow .chip{white-space:nowrap;}
 
@@ -201,7 +201,7 @@ let state = {
   sleepsVals: new Set(),
   bedsVals: new Set(),
   sc: false, toilet: false, shower: false,
-  buckets: new Set([0,1,2,3]),
+  buckets: new Set(),
   sortKey: 'priceAUD',
   sortDir: 'asc'
 };
@@ -228,9 +228,22 @@ function extractLink(raw){
 }
 function parseGvizDate(raw){
   if(typeof raw !== 'string') return null;
-  const m = raw.match(/Date\((\d+),(\d+),(\d+)\)/);
+  const m = raw.match(/Date\((\d+),(\d+),(\d+)/);
   if(!m) return null;
   return new Date(Number(m[1]), Number(m[2]), Number(m[3]));
+}
+function parseCellAsDate(cell){
+  const fromLiteral = parseGvizDate(cell.v);
+  if(fromLiteral) return fromLiteral;
+  if(cell.f){
+    const d = new Date(cell.f);
+    if(!isNaN(d.getTime())) return d;
+  }
+  if(typeof cell.v === 'string'){
+    const d = new Date(cell.v);
+    if(!isNaN(d.getTime())) return d;
+  }
+  return null;
 }
 function dateKey(d){ return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
 const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -295,8 +308,8 @@ async function loadData(){
     const startCell = getCell(headerRow, start);
     const endCell = getCell(headerRow, start + 1);
     const daysCell = getCell(headerRow, start + 2);
-    const startDate = parseGvizDate(startCell.v);
-    const endDate = parseGvizDate(endCell.v);
+    const startDate = parseCellAsDate(startCell);
+    const endDate = parseCellAsDate(endCell);
     if(startDate && endDate){
       dateOptions.push({
         groupIndex: gIdx,
@@ -357,15 +370,10 @@ async function loadData(){
     allRows.push({company, vehicleName, vehicleLink, type, transmission, sleeps, beds, sc, toilet, shower, prices, insurance});
   });
 
-  bedsOptions = Array.from(bedsSet).sort();
+  bedsOptions = Array.from(bedsSet).sort((a,b) => a.length - b.length);
   typeOptions = Array.from(typeSet).sort();
   transOptions = Array.from(transSet).sort();
   sleepsOptions = Array.from(sleepsSet).sort((a,b) => a - b);
-
-  state.types = new Set(typeOptions);
-  state.transmissions = new Set(transOptions);
-  state.sleepsVals = new Set(sleepsOptions);
-  state.bedsVals = new Set(bedsOptions);
 }
 
 function bucketColorFor(aud){
@@ -388,10 +396,11 @@ function currentRows(){
 }
 
 const HEAT_STOPS = [
-  {t:0, rgb:[16,190,186]},
-  {t:0.33, rgb:[255,182,72]},
-  {t:0.66, rgb:[255,122,77]},
-  {t:1, rgb:[156,56,104]}
+  {t:0, rgb:[87,187,138]},
+  {t:0.25, rgb:[171,201,120]},
+  {t:0.5, rgb:[246,214,102]},
+  {t:0.75, rgb:[240,169,109]},
+  {t:1, rgb:[230,124,115]}
 ];
 function heatColor(t){
   t = Math.max(0, Math.min(1, t));
@@ -412,14 +421,14 @@ function heatTextColor(rgb){
 
 function applyFiltersAndSort(rows){
   let out = rows.filter(r => {
-    if(!state.types.has(r.type)) return false;
-    if(!state.transmissions.has(r.transmission)) return false;
-    if(!state.sleepsVals.has(r.sleeps)) return false;
-    if(!state.bedsVals.has(r.beds)) return false;
+    if(state.types.size && !state.types.has(r.type)) return false;
+    if(state.transmissions.size && !state.transmissions.has(r.transmission)) return false;
+    if(state.sleepsVals.size && !state.sleepsVals.has(r.sleeps)) return false;
+    if(state.bedsVals.size && !state.bedsVals.has(r.beds)) return false;
     if(state.sc && !r.sc) return false;
     if(state.toilet && !r.toilet) return false;
     if(state.shower && !r.shower) return false;
-    if(r.price && r.price.aud !== null){
+    if(state.buckets.size && r.price && r.price.aud !== null){
       if(!state.buckets.has(bucketIndexFor(r.price.aud))) return false;
     }
     return true;
