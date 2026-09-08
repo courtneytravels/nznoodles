@@ -22,11 +22,13 @@
   --plum-bg:#9C3868; --plum-text:#FBF6EC;
 }
 *{box-sizing:border-box;}
-body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;}
 .hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);}
 .hero-inner{max-width:1600px;margin:0 auto;}
 .hero h1{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:44px;margin:0 0 8px;color:#3D2350;}
 .hero p{margin:0;font-size:16px;color:#4A2E49;}
+.hero .emoji-line{overflow-wrap:anywhere;}
 nav.tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--border);background:var(--paper);}
 nav.tabs .tabs-inner{max-width:1600px;margin:0 auto;display:flex;gap:4px;width:100%;}
 nav.tabs button{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;padding:14px 18px;border:none;background:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);}
@@ -55,7 +57,7 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
 .tile-perday{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;}
 .tile-sub{font-size:12px;opacity:0.85;}
 
-.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1180px;}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
 td.wrap{white-space:normal;max-width:220px;font-size:11.5px;}
@@ -72,10 +74,26 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
 .price-cell{font-weight:600;border-radius:6px;padding:4px 10px;display:inline-block;}
 
 @media (max-width:900px){
-  .page-layout{flex-direction:column;}
-  .right-col{flex:none;width:100%;position:static;flex-direction:row;overflow-x:auto;}
-  .right-col img{width:220px;flex:0 0 auto;}
+  .page-layout{flex-direction:column;padding:16px;gap:20px;}
+  .right-col{flex:none;width:100%;position:static;flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .right-col img{width:200px;flex:0 0 auto;}
   .tiles{grid-template-columns:1fr 1fr;}
+  .hero{padding:36px 16px 28px;}
+  .hero h1{font-size:32px;}
+  nav.tabs{padding:0 16px;}
+}
+
+@media (max-width:520px){
+  .hero h1{font-size:26px;}
+  .hero p{font-size:14px;}
+  .hero .emoji-line{font-size:18px !important;letter-spacing:4px !important;}
+  .tiles{grid-template-columns:1fr;}
+  .tile-price{font-size:18px;}
+  .controls{gap:10px;}
+  .chip-row{max-width:100% !important;}
+  #bedsChips{max-width:100% !important;}
+  .right-col img{width:160px;}
+  th,td{padding:8px 10px;}
 }
 </style>
 </head>
@@ -85,7 +103,7 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
   <div class="hero-inner">
     <h1>NZ Noodles Road Trip</h1>
     <p>South Island, New Zealand — November 2026</p>
-    <p style="font-size:22px;letter-spacing:8px;margin-top:8px">🦜🥾🌿🚐🏔️🗺️🏕️🌌</p>
+    <p class="emoji-line" style="font-size:22px;letter-spacing:8px;margin-top:8px">🦜🥾🌿🚐🏔️🗺️🏕️🌌</p>
   </div>
 </header>
 
@@ -153,7 +171,7 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
             <th data-key="amenities">Amenities</th>
             <th data-key="priceAUD">Price (AUD)</th>
             <th data-key="priceDayAUD">Per day (AUD)</th>
-            <th data-key="insurance">Av insurance/day (AUD)</th>
+            <th data-key="insurance">Insurance total (AUD)</th>
             <th data-key="grandTotal">Grand total (AUD)</th>
             <th data-key="grandTotalDay">Grand total/day (AUD)</th>
           </tr>
@@ -188,7 +206,6 @@ let allRows = [];
 let dateOptions = [];
 let pickupOptions = [];
 let dropoffOptions = [];
-let bedsOptions = [];
 let typeOptions = [];
 let transOptions = [];
 let sleepsOptions = [];
@@ -199,7 +216,7 @@ let state = {
   types: new Set(),
   transmissions: new Set(),
   sleepsVals: new Set(),
-  bedsVals: new Set(),
+  bedsCategory: new Set(),
   toilet: false, shower: false,
   buckets: new Set(),
   sortKey: 'grandTotal',
@@ -274,6 +291,9 @@ function parseBedCount(str){
   if(!matched && /bunk/i.test(firstClause)) total = 2;
   return total;
 }
+function bedCategoryFor(str){
+  return parseBedCount(str) >= 3 ? '3plus' : '2';
+}
 // The sheet's vehicle links are real cell hyperlinks, not a HYPERLINK() formula or plain
 // text URL — Google's public read feed only exposes the display text for those, not the
 // target. This map is a snapshot of today's links so they still work; if you add or rename
@@ -343,7 +363,7 @@ async function loadData(){
   state.dropoff = dropoffOptions[0] ? dropoffOptions[0].key : null;
 
   allRows = [];
-  const bedsSet = new Set(), typeSet = new Set(), transSet = new Set(), sleepsSet = new Set();
+  const typeSet = new Set(), transSet = new Set(), sleepsSet = new Set();
   let lastCompany = null;
   rows.slice(2).forEach(row => {
     if(!row) return;
@@ -358,7 +378,6 @@ async function loadData(){
     const transmission = (getCell(row,3).f || getCell(row,3).v || '').toString();
     const sleeps = Number(getCell(row,4).v) || 0;
     const beds = getCell(row,5).f || getCell(row,5).v || '';
-    if(beds) bedsSet.add(beds);
     if(type) typeSet.add(type);
     if(transmission) transSet.add(transmission);
     if(sleeps) sleepsSet.add(sleeps);
@@ -377,7 +396,6 @@ async function loadData(){
     allRows.push({company, vehicleName, vehicleLink, type, transmission, sleeps, beds, toilet, shower, prices, insurance});
   });
 
-  bedsOptions = Array.from(bedsSet).sort((a,b) => a.length - b.length);
   typeOptions = Array.from(typeSet).sort();
   transOptions = Array.from(transSet).sort();
   sleepsOptions = Array.from(sleepsSet).sort((a,b) => a - b);
@@ -407,7 +425,7 @@ function currentRows(){
     const priceAud = price ? price.aud : null;
     const grandTotal = (priceAud !== null && insTotal !== null) ? priceAud + insTotal : null;
     const grandTotalDay = (grandTotal !== null && days) ? grandTotal / days : null;
-    return {...r, price, insurancePerDayAud: insPerDay, grandTotal, grandTotalDay};
+    return {...r, price, insurancePerDayAud: insPerDay, insuranceTotal: insTotal, grandTotal, grandTotalDay};
   });
 }
 
@@ -445,7 +463,7 @@ function applyFiltersAndSort(rows){
     if(state.types.size && !state.types.has(r.type)) return false;
     if(state.transmissions.size && !state.transmissions.has(r.transmission)) return false;
     if(state.sleepsVals.size && !state.sleepsVals.has(r.sleeps)) return false;
-    if(state.bedsVals.size && !state.bedsVals.has(r.beds)) return false;
+    if(state.bedsCategory.size && !state.bedsCategory.has(bedCategoryFor(r.beds))) return false;
     if(state.toilet && !r.toilet) return false;
     if(state.shower && !r.shower) return false;
     if(state.buckets.size && r.price && r.price.aud !== null){
@@ -465,7 +483,7 @@ function applyFiltersAndSort(rows){
       case 'beds': av=a.beds; bv=b.beds; break;
       case 'priceAUD': av=a.price ? a.price.aud : null; bv=b.price ? b.price.aud : null; break;
       case 'priceDayAUD': av=a.price ? a.price.dayAud : null; bv=b.price ? b.price.dayAud : null; break;
-      case 'insurance': av=a.insurancePerDayAud; bv=b.insurancePerDayAud; break;
+      case 'insurance': av=a.insuranceTotal; bv=b.insuranceTotal; break;
       case 'grandTotal': av=a.grandTotal; bv=b.grandTotal; break;
       case 'grandTotalDay': av=a.grandTotalDay; bv=b.grandTotalDay; break;
       default: av=''; bv='';
@@ -552,7 +570,7 @@ function render(){
   const priceMin = priceVals.length ? Math.min(...priceVals) : 0;
   const priceMax = priceVals.length ? Math.max(...priceVals) : 0;
 
-  const insVals = rows.map(r => r.insurancePerDayAud).filter(v => v !== null);
+  const insVals = rows.map(r => r.insuranceTotal).filter(v => v !== null);
   const insMin = insVals.length ? Math.min(...insVals) : 0;
   const insMax = insVals.length ? Math.max(...insVals) : 0;
 
@@ -570,8 +588,8 @@ function render(){
     const priceCell = priceAUD !== null
       ? `<span class="price-cell" style="${heatStyleFor(priceAUD, priceMin, priceMax)}">$${fmtMoney(priceAUD)}</span>`
       : '—';
-    const insCell = r.insurancePerDayAud !== null
-      ? `<span class="price-cell" style="${heatStyleFor(r.insurancePerDayAud, insMin, insMax)}">$${fmtMoney(r.insurancePerDayAud)}</span>`
+    const insCell = r.insuranceTotal !== null
+      ? `<span class="price-cell" style="${heatStyleFor(r.insuranceTotal, insMin, insMax)}">$${fmtMoney(r.insuranceTotal)}</span>`
       : '—';
     const gtCell = r.grandTotal !== null
       ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)}">$${fmtMoney(r.grandTotal)}</span>`
@@ -707,7 +725,7 @@ function setupControls(){
   renderToggleGroup('typeChips', typeOptions, state.types, typeColor);
   renderToggleGroup('transChips', transOptions, state.transmissions, transColor);
   renderToggleGroup('sleepsChips', sleepsOptions, state.sleepsVals, () => ({bg:'var(--lilac-bg)', text:'var(--lilac-text)'}));
-  renderToggleGroup('bedsChips', bedsOptions, state.bedsVals, () => ({bg:'var(--coral-bg)', text:'var(--coral-text)'}));
+  renderToggleGroup('bedsChips', ['2','3plus'], state.bedsCategory, () => ({bg:'var(--coral-bg)', text:'var(--coral-text)'}), v => v === '2' ? '2 beds' : '3 beds+');
   renderAmenityChips();
   renderBucketChips();
 
