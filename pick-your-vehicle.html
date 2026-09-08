@@ -151,6 +151,8 @@ tr.chosen-row td{background:#F3ECFA;}
 .sl-soldout-badge{position:absolute;top:10px;right:10px;background:var(--coral-text);color:#fff;font-size:10px;font-weight:700;letter-spacing:0.03em;padding:4px 9px;border-radius:6px;}
 .sl-card-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1;}
 .sl-company{font-size:10.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);}
+.sl-logo-row{display:flex;align-items:center;gap:8px;}
+.sl-logo{height:26px;max-width:110px;object-fit:contain;background:#fff;border:1px solid var(--border);border-radius:6px;padding:4px 8px;display:block;}
 .sl-name{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:19px;color:var(--heading);margin:2px 0 0;}
 .sl-features{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
 .sl-feature{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--ink);background:#F7F3E8;padding:4px 8px;border-radius:6px;}
@@ -757,6 +759,27 @@ function companyPromoBadge(company){
   }
   return '';
 }
+function companyPromoBadgeInline(company){
+  if(/indie/i.test(company)){
+    return `<span class="promo-badge" tabindex="0" data-tooltip="Use promo code MORE25 at checkout for additional savings">MORE25</span>`;
+  }
+  if(/star\s*rv/i.test(company)){
+    return `<span class="promo-badge" tabindex="0" data-tooltip="Use promo code EARLYBIRD10 at checkout for additional savings">EARLYBIRD10</span>`;
+  }
+  return '';
+}
+const COMPANY_LOGOS = [
+  {re:/maui/i, url:'https://s3-eu-west-1.amazonaws.com/tpd/logos/5c48d44c3712100001b57163/0x0.png'},
+  {re:/mighty/i, url:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpoYE6WwX7yxBk-FqWG5U_S2TbwhaZsJOjLvTnNAsO6UKhfC1RHHnC01E&s=10'},
+  {re:/star\s*rv/i, url:'https://s3-eu-west-1.amazonaws.com/tpd/logos/5e4a97e480da5a0001aed43d/0x0.png'},
+  {re:/apollo/i, url:'https://files.vroomvroomvroom.com/assets/campervan/logo-apollo-200x80_3x.png'},
+  {re:/britz/i, url:'https://www.racv.com.au/content/dam/racv-assets/images/logos/travel-experiences/420x315/britz-logo-420x315.jpg'},
+  {re:/indie/i, url:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefLYVioguYWnz2vbXs8RsJgc_F_EvadjRInEpJBakBg_4_6d_JdXMcss-&s=10'}
+];
+function companyLogoUrl(company){
+  const match = COMPANY_LOGOS.find(c => c.re.test(company));
+  return match ? match.url : null;
+}
 
 function computeTiles(rows){
   const priced = rows.filter(r => r.grandTotal !== null && !isNaN(r.grandTotal));
@@ -905,7 +928,10 @@ function renderShortlist(){
     return `<div class="sl-card">
       <div class="sl-card-image">🚐${soldOutRibbon}</div>
       <div class="sl-card-body">
-        <div class="sl-company">${escapeHtml(r.company)}${companyPromoBadge(r.company)}</div>
+        <div class="sl-logo-row">
+          ${companyLogoUrl(r.company) ? `<img class="sl-logo" src="${companyLogoUrl(r.company)}" alt="${escapeHtml(r.company)}">` : `<span class="sl-company">${escapeHtml(r.company)}</span>`}
+          ${companyPromoBadgeInline(r.company)}
+        </div>
         <div class="sl-name">${escapeHtml(r.vehicleName)}</div>
         <div class="sl-features">
           <span class="sl-feature">👤 ${r.sleeps} adults</span>
