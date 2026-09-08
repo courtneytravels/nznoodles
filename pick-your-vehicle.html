@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NZ Noodles Road Trip 🦜🥾🌿🚐🏔️🗺️🏕️🌌 — Pick your vehicle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#FBF6EC;
@@ -25,7 +25,7 @@
 body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);}
 .hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);}
 .hero-inner{max-width:1600px;margin:0 auto;}
-.hero h1{font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:44px;margin:0 0 8px;color:#3D2350;}
+.hero h1{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:44px;margin:0 0 8px;color:#3D2350;}
 .hero p{margin:0;font-size:16px;color:#4A2E49;}
 nav.tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--border);background:var(--paper);}
 nav.tabs .tabs-inner{max-width:1600px;margin:0 auto;display:flex;gap:4px;width:100%;}
@@ -56,7 +56,7 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
 .tile-sub{font-size:12px;opacity:0.85;}
 
 .table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
-table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1080px;}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1180px;}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
 td.wrap{white-space:normal;max-width:220px;font-size:11.5px;}
 th{cursor:pointer;font-weight:600;color:var(--heading);background:#F5EEDF;user-select:none;}
@@ -151,10 +151,11 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
             <th data-key="sleeps">Sleeps</th>
             <th data-key="beds">Beds</th>
             <th data-key="amenities">Amenities</th>
-            <th data-key="priceNZD">Price (NZD)</th>
             <th data-key="priceAUD">Price (AUD)</th>
             <th data-key="priceDayAUD">Per day (AUD)</th>
-            <th data-key="insurance">Insurance (NZD)</th>
+            <th data-key="insurance">Av insurance/day (AUD)</th>
+            <th data-key="grandTotal">Grand total (AUD)</th>
+            <th data-key="grandTotalDay">Grand total/day (AUD)</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
@@ -174,8 +175,7 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
 const SHEET_ID = '1xURtsfFb8DAIVcRo2TWQ3GvpIF5pGluKS_4cY58POE0';
 const SHEET_NAME = 'Campervans NZ';
 const GROUP_STARTS = [9,12,15,18,21,24,27,30];
-const INSURANCE_COLS = [33,34,35];
-const INSURANCE_EST_COLS = [36,37];
+const INSURANCE_AVG_DAY_AUD_COL = 37;
 
 const BUCKETS = [
   {label:'<$3500', max:3500, bg:'var(--turquoise-bg)', text:'var(--turquoise-text)'},
@@ -200,9 +200,9 @@ let state = {
   transmissions: new Set(),
   sleepsVals: new Set(),
   bedsVals: new Set(),
-  sc: false, toilet: false, shower: false,
+  toilet: false, shower: false,
   buckets: new Set(),
-  sortKey: 'priceAUD',
+  sortKey: 'grandTotal',
   sortDir: 'asc'
 };
 
@@ -362,25 +362,19 @@ async function loadData(){
     if(type) typeSet.add(type);
     if(transmission) transSet.add(transmission);
     if(sleeps) sleepsSet.add(sleeps);
-    const sc = getBool(row,6);
     const toilet = getBool(row,7);
     const shower = getBool(row,8);
 
     const prices = GROUP_STARTS.map(start => ({
-      nzd: Number(getCell(row,start).v) || null,
       aud: Number(getCell(row,start+1).v) || null,
       dayAud: Number(getCell(row,start+2).v) || null
     }));
 
     const insurance = {
-      low: getCell(row,INSURANCE_COLS[0]).v,
-      mid: getCell(row,INSURANCE_COLS[1]).v,
-      high: getCell(row,INSURANCE_COLS[2]).v,
-      est16: getCell(row,INSURANCE_EST_COLS[0]).v,
-      est21: getCell(row,INSURANCE_EST_COLS[1]).v
+      avgDayAud: Number(getCell(row,INSURANCE_AVG_DAY_AUD_COL).v)
     };
 
-    allRows.push({company, vehicleName, vehicleLink, type, transmission, sleeps, beds, sc, toilet, shower, prices, insurance});
+    allRows.push({company, vehicleName, vehicleLink, type, transmission, sleeps, beds, toilet, shower, prices, insurance});
   });
 
   bedsOptions = Array.from(bedsSet).sort((a,b) => a.length - b.length);
@@ -405,7 +399,16 @@ function findGroupForSelection(){
 function currentRows(){
   const group = findGroupForSelection();
   const gIdx = group ? group.groupIndex : 0;
-  return allRows.map(r => ({...r, price: r.prices[gIdx]}));
+  const days = group ? group.days : null;
+  return allRows.map(r => {
+    const price = r.prices[gIdx];
+    const insPerDay = r.insurance && !isNaN(r.insurance.avgDayAud) ? r.insurance.avgDayAud : null;
+    const insTotal = (insPerDay !== null && days) ? insPerDay * days : null;
+    const priceAud = price ? price.aud : null;
+    const grandTotal = (priceAud !== null && insTotal !== null) ? priceAud + insTotal : null;
+    const grandTotalDay = (grandTotal !== null && days) ? grandTotal / days : null;
+    return {...r, price, insurancePerDayAud: insPerDay, grandTotal, grandTotalDay};
+  });
 }
 
 const HEAT_STOPS = [
@@ -431,6 +434,11 @@ function heatTextColor(rgb){
   const lum = 0.299*rgb[0] + 0.587*rgb[1] + 0.114*rgb[2];
   return lum > 150 ? '#3A362E' : '#FBF6EC';
 }
+function heatStyleFor(value, min, max){
+  const t = max > min ? (value - min) / (max - min) : 0.4;
+  const rgb = heatColor(t);
+  return `background:${rgbCss(rgb)};color:${heatTextColor(rgb)}`;
+}
 
 function applyFiltersAndSort(rows){
   let out = rows.filter(r => {
@@ -438,7 +446,6 @@ function applyFiltersAndSort(rows){
     if(state.transmissions.size && !state.transmissions.has(r.transmission)) return false;
     if(state.sleepsVals.size && !state.sleepsVals.has(r.sleeps)) return false;
     if(state.bedsVals.size && !state.bedsVals.has(r.beds)) return false;
-    if(state.sc && !r.sc) return false;
     if(state.toilet && !r.toilet) return false;
     if(state.shower && !r.shower) return false;
     if(state.buckets.size && r.price && r.price.aud !== null){
@@ -456,9 +463,11 @@ function applyFiltersAndSort(rows){
       case 'transmission': av=a.transmission; bv=b.transmission; break;
       case 'sleeps': av=a.sleeps; bv=b.sleeps; break;
       case 'beds': av=a.beds; bv=b.beds; break;
-      case 'priceNZD': av=a.price ? a.price.nzd : null; bv=b.price ? b.price.nzd : null; break;
       case 'priceAUD': av=a.price ? a.price.aud : null; bv=b.price ? b.price.aud : null; break;
       case 'priceDayAUD': av=a.price ? a.price.dayAud : null; bv=b.price ? b.price.dayAud : null; break;
+      case 'insurance': av=a.insurancePerDayAud; bv=b.insurancePerDayAud; break;
+      case 'grandTotal': av=a.grandTotal; bv=b.grandTotal; break;
+      case 'grandTotalDay': av=a.grandTotalDay; bv=b.grandTotalDay; break;
       default: av=''; bv='';
     }
     if(av === null || av === undefined) av = state.sortDir === 'asc' ? Infinity : -Infinity;
@@ -499,22 +508,15 @@ function amenityIcon(on, letter){
 }
 
 function computeTiles(rows){
-  const priced = rows.filter(r => r.price && r.price.aud !== null && !isNaN(r.price.aud));
+  const priced = rows.filter(r => r.grandTotal !== null && !isNaN(r.grandTotal));
   if(!priced.length) return null;
-  const cheapest = priced.reduce((a,b) => b.price.aud < a.price.aud ? b : a);
+  const cheapest = priced.reduce((a,b) => b.grandTotal < a.grandTotal ? b : a);
   const twoPlus = priced.filter(r => parseBedCount(r.beds) > 2);
-  const cheapest2 = twoPlus.length ? twoPlus.reduce((a,b) => b.price.aud < a.price.aud ? b : a) : null;
-  const avg = priced.reduce((s,r) => s + r.price.aud, 0) / priced.length;
-  const avgDay = priced.reduce((s,r) => s + (r.price.dayAud || 0), 0) / priced.length;
-  const highest = priced.reduce((a,b) => b.price.aud > a.price.aud ? b : a);
+  const cheapest2 = twoPlus.length ? twoPlus.reduce((a,b) => b.grandTotal < a.grandTotal ? b : a) : null;
+  const avg = priced.reduce((s,r) => s + r.grandTotal, 0) / priced.length;
+  const avgDay = priced.reduce((s,r) => s + (r.grandTotalDay || 0), 0) / priced.length;
+  const highest = priced.reduce((a,b) => b.grandTotal > a.grandTotal ? b : a);
   return {cheapest, cheapest2, avg, avgDay, highest};
-}
-
-function selectedInsuranceKey(){
-  const day = state.dropoff ? Number(state.dropoff.split('-')[2]) : null;
-  if(day === 22 || day === 23) return 'est16';
-  if(day === 27 || day === 28) return 'est21';
-  return 'est16';
 }
 
 function renderTiles(rows, days){
@@ -526,7 +528,7 @@ function renderTiles(rows, days){
     if(!row) return `<div class="tile" style="background:${bg}"><div class="tile-label" style="color:${text}">${label}</div><div class="tile-price" style="color:${text}">—</div></div>`;
     return `<div class="tile" style="background:${bg}">
       <div class="tile-label" style="color:${text}">${label}</div>
-      <div class="tile-price" style="color:${text}">$${fmtMoney(row.price.aud)}<span class="tile-perday" style="color:${text}"> · $${fmtMoney(row.price.dayAud)}/day${dTxt}</span></div>
+      <div class="tile-price" style="color:${text}">$${fmtMoney(row.grandTotal)}<span class="tile-perday" style="color:${text}"> · $${fmtMoney(row.grandTotalDay)}/day${dTxt}</span></div>
       <div class="tile-sub" style="color:${text}">${escapeHtml(row.vehicleName)} · ${escapeHtml(row.company)}</div>
     </div>`;
   };
@@ -534,7 +536,7 @@ function renderTiles(rows, days){
     optionTile('Cheapest option', 'var(--turquoise-bg)', 'var(--turquoise-text)', t.cheapest) +
     optionTile('Cheapest, >2 beds', 'var(--lilac-bg)', 'var(--lilac-text)', t.cheapest2) +
     `<div class="tile" style="background:var(--gold-bg)">
-      <div class="tile-label" style="color:var(--gold-text)">Average price</div>
+      <div class="tile-label" style="color:var(--gold-text)">Average grand total</div>
       <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(t.avg)}<span class="tile-perday" style="color:var(--gold-text)"> · $${fmtMoney(t.avgDay)}/day${dTxt}</span></div>
       <div class="tile-sub" style="color:var(--gold-text)">Across ${document.getElementById('tbody').children.length} matching vehicles</div>
     </div>` +
@@ -546,25 +548,35 @@ function render(){
   const days = group ? group.days : null;
   const rows = applyFiltersAndSort(currentRows());
 
-  const pricedAud = rows.map(r => r.price && r.price.aud !== null ? r.price.aud : null).filter(v => v !== null);
-  const heatMin = pricedAud.length ? Math.min(...pricedAud) : 0;
-  const heatMax = pricedAud.length ? Math.max(...pricedAud) : 0;
-  const estKey = selectedInsuranceKey();
-  const estLabel = estKey === 'est16' ? '16-day est.' : '21-day est.';
-  const estColor = estKey === 'est16' ? {bg:'var(--teal-bg)', text:'var(--teal-text)'} : {bg:'var(--pink-bg)', text:'var(--pink-text)'};
+  const priceVals = rows.map(r => r.price && r.price.aud !== null ? r.price.aud : null).filter(v => v !== null);
+  const priceMin = priceVals.length ? Math.min(...priceVals) : 0;
+  const priceMax = priceVals.length ? Math.max(...priceVals) : 0;
+
+  const insVals = rows.map(r => r.insurancePerDayAud).filter(v => v !== null);
+  const insMin = insVals.length ? Math.min(...insVals) : 0;
+  const insMax = insVals.length ? Math.max(...insVals) : 0;
+
+  const gtVals = rows.map(r => r.grandTotal).filter(v => v !== null);
+  const gtMin = gtVals.length ? Math.min(...gtVals) : 0;
+  const gtMax = gtVals.length ? Math.max(...gtVals) : 0;
 
   const tbody = document.getElementById('tbody');
   tbody.innerHTML = rows.map(r => {
     const vehicleCell = r.vehicleLink
       ? `<a class="vehicle-link" href="${escapeHtml(r.vehicleLink)}" target="_blank" rel="noopener">${escapeHtml(r.vehicleName)}</a>`
       : escapeHtml(r.vehicleName);
+
     const priceAUD = r.price ? r.price.aud : null;
-    let priceAUDCell = '—';
-    if(priceAUD !== null){
-      const t = heatMax > heatMin ? (priceAUD - heatMin) / (heatMax - heatMin) : 0.4;
-      const rgb = heatColor(t);
-      priceAUDCell = `<span class="price-cell" style="background:${rgbCss(rgb)};color:${heatTextColor(rgb)}">$${fmtMoney(priceAUD)}</span>`;
-    }
+    const priceCell = priceAUD !== null
+      ? `<span class="price-cell" style="${heatStyleFor(priceAUD, priceMin, priceMax)}">$${fmtMoney(priceAUD)}</span>`
+      : '—';
+    const insCell = r.insurancePerDayAud !== null
+      ? `<span class="price-cell" style="${heatStyleFor(r.insurancePerDayAud, insMin, insMax)}">$${fmtMoney(r.insurancePerDayAud)}</span>`
+      : '—';
+    const gtCell = r.grandTotal !== null
+      ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)}">$${fmtMoney(r.grandTotal)}</span>`
+      : '—';
+
     return `<tr>
       <td>${escapeHtml(r.company)}</td>
       <td>${vehicleCell}</td>
@@ -572,13 +584,12 @@ function render(){
       <td>${transBadge(r.transmission)}</td>
       <td>${r.sleeps || '—'}</td>
       <td class="wrap">${escapeHtml(r.beds)}</td>
-      <td>${amenityIcon(r.sc,'SC')}${amenityIcon(r.toilet,'T')}${amenityIcon(r.shower,'S')}</td>
-      <td>${r.price ? '$' + fmtMoney(r.price.nzd) : '—'}</td>
-      <td>${priceAUDCell}</td>
+      <td>${amenityIcon(r.toilet,'T')}${amenityIcon(r.shower,'S')}</td>
+      <td>${priceCell}</td>
       <td>${r.price ? '$' + fmtMoney(r.price.dayAud) : '—'}</td>
-      <td>
-        <span class="insurance-tier" style="background:${estColor.bg};color:${estColor.text}">${estLabel} $${fmtMoney(r.insurance[estKey])}</span>
-      </td>
+      <td>${insCell}</td>
+      <td>${gtCell}</td>
+      <td>${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : '—'}</td>
     </tr>`;
   }).join('');
   renderTiles(rows, days);
@@ -631,7 +642,6 @@ function renderBucketChips(){
 
 function renderAmenityChips(){
   const defs = [
-    {key:'sc', label:'Self-contained', bg:'var(--turquoise-bg)', text:'var(--turquoise-text)'},
     {key:'toilet', label:'Toilet', bg:'var(--gold-bg)', text:'var(--gold-text)'},
     {key:'shower', label:'Shower', bg:'var(--pink-bg)', text:'var(--pink-text)'}
   ];
