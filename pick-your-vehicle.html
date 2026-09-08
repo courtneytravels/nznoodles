@@ -50,7 +50,7 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
 #bucketRow{max-width:none;flex-wrap:nowrap;}
 #bucketRow .chip{white-space:nowrap;}
 
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:22px;}
 .tile{border-radius:12px;padding:14px 16px;min-height:78px;}
 .tile-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:6px;}
 .tile-price{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:2px;}
@@ -58,6 +58,7 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
 .tile-sub{font-size:12px;opacity:0.85;}
 
 .table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);-webkit-overflow-scrolling:touch;}
+.table-wrap.collapsed .col-extra{display:none;}
 table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1180px;}
 th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
 td.wrap{white-space:normal;max-width:220px;font-size:11.5px;}
@@ -72,12 +73,31 @@ tbody tr:hover td{background:#FAF7EF;}
 a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid var(--lilac-bg);}
 #status{padding:20px 0;color:var(--muted);font-size:14px;}
 .price-cell{font-weight:600;border-radius:6px;padding:4px 10px;display:inline-block;}
+.choose-btn{font-family:'Inter';font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;font-weight:600;border:1px solid var(--lilac-text);background:#fff;color:var(--lilac-text);}
+tr.chosen-row td{background:#F3ECFA;}
+.split-summary{border-radius:12px;padding:16px 20px;margin-bottom:16px;background:#fff;border:1px solid var(--border);}
+.split-summary h3{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:20px;margin:0 0 4px;color:var(--heading);}
+.split-summary p{margin:0;font-size:13px;color:var(--muted);}
+.split-bar{display:flex;height:34px;border-radius:8px;overflow:hidden;margin:14px 0;}
+.split-bar div{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;}
+.split-cards{display:flex;flex-wrap:wrap;gap:12px;}
+.split-card{flex:1 1 220px;border-radius:12px;padding:14px 16px;}
+.split-card .amount{font-family:'Fraunces',serif;font-size:24px;font-weight:600;margin:4px 0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-weekday{font-size:10px;font-weight:600;color:var(--muted);text-align:center;text-transform:uppercase;padding-bottom:2px;}
+.cal-day{border-radius:8px;border:1px solid var(--border);background:#fff;min-height:54px;padding:4px 5px;}
+.cal-day.cal-empty{border:none;background:transparent;}
+.cal-day.cal-in-trip{background:#F3ECFA;border-color:var(--lilac-text);}
+.cal-daynum{font-size:11px;color:var(--ink);font-weight:600;}
+.cal-dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+.cal-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
+.cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--ink);}
+.cal-legend .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
 
 @media (max-width:900px){
   .page-layout{flex-direction:column;padding:16px;gap:20px;}
   .right-col{flex:none;width:100%;position:static;flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;}
   .right-col img{width:200px;flex:0 0 auto;}
-  .tiles{grid-template-columns:1fr 1fr;}
   .hero{padding:36px 16px 28px;}
   .hero h1{font-size:32px;}
   nav.tabs{padding:0 16px;}
@@ -87,7 +107,6 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
   .hero h1{font-size:26px;}
   .hero p{font-size:14px;}
   .hero .emoji-line{font-size:18px !important;letter-spacing:4px !important;}
-  .tiles{grid-template-columns:1fr;}
   .tile-price{font-size:18px;}
   .controls{gap:10px;}
   .chip-row{max-width:100% !important;}
@@ -109,11 +128,12 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
 
 <nav class="tabs">
   <div class="tabs-inner">
-    <button class="active">Pick your vehicle</button>
+    <button class="active" id="tab-vehicle">Pick your vehicle</button>
+    <button id="tab-split">Split the cost</button>
   </div>
 </nav>
 
-<div class="page-layout">
+<div class="page-layout" id="page-vehicle">
   <div class="left-col">
     <div class="controls">
       <div class="control-group">
@@ -149,7 +169,7 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
         <div class="chip-row" id="amenityChips"></div>
       </div>
       <div class="control-group">
-        <span class="control-label">Price (AUD, total trip)</span>
+        <span class="control-label">Price (total trip)</span>
         <div class="chip-row" id="bucketRow"></div>
       </div>
     </div>
@@ -158,7 +178,9 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
 
     <p id="status">Loading vehicle data from your Google Sheet…</p>
 
-    <div class="table-wrap" id="tableWrap" style="display:none">
+    <button class="chip" id="toggleColsBtn" style="margin-bottom:10px">Show price &amp; insurance breakdown</button>
+
+    <div class="table-wrap collapsed" id="tableWrap" style="display:none">
       <table>
         <thead>
           <tr>
@@ -169,16 +191,18 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
             <th data-key="sleeps">Sleeps</th>
             <th data-key="beds">Beds</th>
             <th data-key="amenities">Amenities</th>
-            <th data-key="priceAUD">Price (AUD)</th>
-            <th data-key="priceDayAUD">Per day (AUD)</th>
-            <th data-key="insurance">Insurance total (AUD)</th>
-            <th data-key="grandTotal">Grand total (AUD)</th>
-            <th data-key="grandTotalDay">Grand total/day (AUD)</th>
+            <th data-key="priceAUD" class="col-extra">Price</th>
+            <th data-key="priceDayAUD" class="col-extra">Per day</th>
+            <th data-key="insurance" class="col-extra">Insurance total — est.*</th>
+            <th data-key="grandTotal">Grand total — est.*</th>
+            <th data-key="grandTotalDay">Grand total/day — est.*</th>
+            <th>Split</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">* Insurance is estimated from an average daily rate × trip length, not a locked-in quote — confirm the exact figure with the rental company at booking. Grand total and grand total/day inherit this estimate since they include insurance.</p>
   </div>
 
   <div class="right-col">
@@ -186,6 +210,42 @@ a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid
     <img src="https://images.unsplash.com/photo-1617677458944-b39140d92d02?ixid=M3w0NzkzMTh8MHwxfHNlYXJjaHw3fHxSb3lzJTIwUGVha3xlbnwwfHx8fDE3MjA4MzE4NTl8MA&ixlib=rb-4.0.3&auto=format&w=1080&h=1350&fit=crop&q=80" alt="New Zealand scenery" loading="lazy">
     <img src="https://abbiejadewanders.co.uk/wp-content/uploads/2022/02/IMG_0558-2-up-scaled.jpg" alt="New Zealand scenery" loading="lazy">
     <img src="https://trackslesstravelled.com/wp-content/uploads/2024/09/liverpool-hut-new-zealand-sunrise.jpg" alt="New Zealand scenery" loading="lazy">
+  </div>
+</div>
+
+<div class="page-layout" id="page-split" style="display:none">
+  <div class="left-col" style="max-width:820px">
+    <div class="controls">
+      <div class="control-group">
+        <span class="control-label">Chosen vehicle</span>
+        <select id="vehicleSelect" style="min-width:280px"></select>
+      </div>
+      <div class="control-group">
+        <span class="control-label">&nbsp;</span>
+        <button class="chip" id="goToVehicleTab" style="cursor:pointer">Change pick up / drop off →</button>
+      </div>
+    </div>
+
+    <div class="tiles" id="splitTiles"></div>
+
+    <div class="split-summary" id="splitSummary"></div>
+
+    <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.03em;margin:0 0 8px">Travellers — everyone enters their own return date</p>
+    <div id="travellerRows"></div>
+    <button class="chip" id="addTravellerBtn" style="margin:4px 0 18px">+ Add traveller</button>
+
+    <div id="splitContent"></div>
+
+    <div class="calendar">
+      <p class="split-summary" style="margin:18px 0 10px;padding:10px 16px;font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:16px;color:var(--heading)" id="calendarTitle">November</p>
+      <div class="cal-grid" style="margin-bottom:4px">
+        <div class="cal-weekday">Sun</div><div class="cal-weekday">Mon</div><div class="cal-weekday">Tue</div><div class="cal-weekday">Wed</div><div class="cal-weekday">Thu</div><div class="cal-weekday">Fri</div><div class="cal-weekday">Sat</div>
+      </div>
+      <div class="cal-grid" id="calendarGrid"></div>
+      <div class="cal-legend" id="calendarLegend"></div>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);margin-top:14px">Insurance figures are estimates — see note on the Pick your vehicle tab.</p>
   </div>
 </div>
 
@@ -213,6 +273,8 @@ let sleepsOptions = [];
 let state = {
   pickup: null,
   dropoff: null,
+  chosenKey: null,
+  travellers: [],
   types: new Set(),
   transmissions: new Set(),
   sleepsVals: new Set(),
@@ -276,6 +338,18 @@ function parseCellAsDate(cell){
   return null;
 }
 function dateKey(d){ return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
+function pad2(n){ return String(n).padStart(2,'0'); }
+function toISODate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+function fromISODate(s){
+  if(!s) return null;
+  const parts = s.split('-').map(Number);
+  return new Date(parts[0], parts[1]-1, parts[2]);
+}
+function clampDate(d, min, max){
+  if(d < min) return min;
+  if(d > max) return max;
+  return d;
+}
 const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function formatDateLabel(d){
@@ -362,6 +436,17 @@ async function loadData(){
   state.pickup = pickupOptions[0] ? pickupOptions[0].key : null;
   state.dropoff = dropoffOptions[0] ? dropoffOptions[0].key : null;
 
+  const defaultGroup = dateOptions.find(g => dateKey(g.startDate) === state.pickup && dateKey(g.endDate) === state.dropoff);
+  const fullReturn = defaultGroup ? toISODate(defaultGroup.endDate) : '';
+  const earlyOpt = dropoffOptions.find(o => o.date.getDate() === 23);
+  const earlyReturn = earlyOpt ? toISODate(earlyOpt.date) : fullReturn;
+  state.travellers = [
+    {name:'You', returnDate: earlyReturn},
+    {name:'', returnDate: fullReturn},
+    {name:'', returnDate: fullReturn},
+    {name:'', returnDate: fullReturn}
+  ];
+
   allRows = [];
   const typeSet = new Set(), transSet = new Set(), sleepsSet = new Set();
   let lastCompany = null;
@@ -393,7 +478,8 @@ async function loadData(){
       avgDayAud: Number(getCell(row,INSURANCE_AVG_DAY_AUD_COL).v)
     };
 
-    allRows.push({company, vehicleName, vehicleLink, type, transmission, sleeps, beds, toilet, shower, prices, insurance});
+    const rowKey = company + '||' + vehicleName;
+    allRows.push({rowKey, company, vehicleName, vehicleLink, type, transmission, sleeps, beds, toilet, shower, prices, insurance});
   });
 
   typeOptions = Array.from(typeSet).sort();
@@ -595,7 +681,7 @@ function render(){
       ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)}">$${fmtMoney(r.grandTotal)}</span>`
       : '—';
 
-    return `<tr>
+    return `<tr class="${r.rowKey === state.chosenKey ? 'chosen-row' : ''}">
       <td>${escapeHtml(r.company)}</td>
       <td>${vehicleCell}</td>
       <td>${typeBadge(r.type)}</td>
@@ -603,14 +689,25 @@ function render(){
       <td>${r.sleeps || '—'}</td>
       <td class="wrap">${escapeHtml(r.beds)}</td>
       <td>${amenityIcon(r.toilet,'T')}${amenityIcon(r.shower,'S')}</td>
-      <td>${priceCell}</td>
-      <td>${r.price ? '$' + fmtMoney(r.price.dayAud) : '—'}</td>
-      <td>${insCell}</td>
+      <td class="col-extra">${priceCell}</td>
+      <td class="col-extra">${r.price ? '$' + fmtMoney(r.price.dayAud) : '—'}</td>
+      <td class="col-extra">${insCell}</td>
       <td>${gtCell}</td>
       <td>${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : '—'}</td>
+      <td><button class="choose-btn" data-key="${escapeHtml(r.rowKey)}">${r.rowKey === state.chosenKey ? 'Chosen ✓' : 'Choose →'}</button></td>
     </tr>`;
   }).join('');
+  document.querySelectorAll('.choose-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.chosenKey = btn.dataset.key;
+      populateVehicleSelect();
+      switchTab('split');
+      render();
+    });
+  });
   renderTiles(rows, days);
+  populateVehicleSelect();
+  renderSplit();
 
   const badge = document.getElementById('tripLengthBadge');
   if(badge){
@@ -720,6 +817,193 @@ function renderDateChips(){
   });
 }
 
+function switchTab(name){
+  document.getElementById('page-vehicle').style.display = name === 'vehicle' ? 'flex' : 'none';
+  document.getElementById('page-split').style.display = name === 'split' ? 'flex' : 'none';
+  document.getElementById('tab-vehicle').classList.toggle('active', name === 'vehicle');
+  document.getElementById('tab-split').classList.toggle('active', name === 'split');
+}
+
+function populateVehicleSelect(){
+  const sel = document.getElementById('vehicleSelect');
+  if(!sel) return;
+  const rows = currentRows().slice().sort((a,b) => (a.grandTotal ?? Infinity) - (b.grandTotal ?? Infinity));
+  sel.innerHTML = rows.map(r => `<option value="${escapeHtml(r.rowKey)}">${escapeHtml(r.company)} — ${escapeHtml(r.vehicleName)}${r.grandTotal !== null ? ' ($' + fmtMoney(r.grandTotal) + ')' : ''}</option>`).join('');
+  if(!state.chosenKey && rows.length && rows[0].grandTotal !== null){
+    state.chosenKey = rows[0].rowKey;
+  }
+  if(state.chosenKey) sel.value = state.chosenKey;
+}
+
+const TRAVELLER_COLORS = [
+  {bg:'var(--lilac-bg)', text:'var(--lilac-text)'},
+  {bg:'var(--coral-bg)', text:'var(--coral-text)'},
+  {bg:'var(--turquoise-bg)', text:'var(--turquoise-text)'},
+  {bg:'var(--gold-bg)', text:'var(--gold-text)'},
+  {bg:'var(--pink-bg)', text:'var(--pink-text)'},
+  {bg:'var(--teal-bg)', text:'var(--teal-text)'}
+];
+
+function renderCalendar(group){
+  const grid = document.getElementById('calendarGrid');
+  const legend = document.getElementById('calendarLegend');
+  const title = document.getElementById('calendarTitle');
+  if(!grid) return;
+  if(!group){ grid.innerHTML = ''; if(legend) legend.innerHTML = ''; return; }
+
+  const year = group.startDate.getFullYear();
+  const monthIndex = group.startDate.getMonth();
+  const monthStart = new Date(year, monthIndex, 1);
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  const startWeekday = monthStart.getDay();
+  if(title) title.textContent = `${MONTHS[monthIndex]} ${year}`;
+
+  let cells = '';
+  for(let i = 0; i < startWeekday; i++) cells += `<div class="cal-day cal-empty"></div>`;
+  for(let d = 1; d <= daysInMonth; d++){
+    const day = new Date(year, monthIndex, d);
+    const inTrip = day >= group.startDate && day < group.endDate;
+    const dots = state.travellers.map((t, i) => {
+      const ret = clampDate(t.returnDate ? fromISODate(t.returnDate) : group.endDate, group.startDate, group.endDate);
+      const present = day >= group.startDate && day < ret;
+      if(!present) return '';
+      const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
+      return `<span class="cal-dot" style="background:${c.text}" title="${escapeHtml(t.name || 'Traveller ' + (i+1))}"></span>`;
+    }).join('');
+    cells += `<div class="cal-day ${inTrip ? 'cal-in-trip' : ''}">
+      <div class="cal-daynum">${d}</div>
+      <div class="cal-dots">${dots}</div>
+    </div>`;
+  }
+  grid.innerHTML = cells;
+
+  if(legend){
+    legend.innerHTML = state.travellers.map((t, i) => {
+      const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
+      return `<span><span class="dot" style="background:${c.text}"></span>${escapeHtml(t.name || 'Traveller ' + (i+1))}</span>`;
+    }).join('');
+  }
+}
+
+function renderTravellerRows(group){
+  const container = document.getElementById('travellerRows');
+  if(!container) return;
+  const minDate = group ? toISODate(group.startDate) : '';
+  const maxDate = group ? toISODate(group.endDate) : '';
+  container.innerHTML = state.travellers.map((t,i) => `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+      <input type="text" class="traveller-name" data-i="${i}" value="${escapeHtml(t.name)}" placeholder="Traveller ${i+1}" style="flex:1;min-width:140px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);font-family:'Inter';font-size:13px">
+      <input type="date" class="traveller-date" data-i="${i}" value="${t.returnDate}" min="${minDate}" max="${maxDate}" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);font-family:'Inter';font-size:13px">
+      ${state.travellers.length > 2 ? `<button class="choose-btn" data-remove="${i}" style="border-color:var(--coral-text);color:var(--coral-text)">Remove</button>` : ''}
+    </div>`).join('');
+  container.querySelectorAll('.traveller-name').forEach(inp => {
+    inp.addEventListener('input', e => { state.travellers[Number(e.target.dataset.i)].name = e.target.value; renderSplit(); });
+  });
+  container.querySelectorAll('.traveller-date').forEach(inp => {
+    inp.addEventListener('change', e => { state.travellers[Number(e.target.dataset.i)].returnDate = e.target.value; renderSplit(); });
+  });
+  container.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.travellers.splice(Number(btn.dataset.remove), 1);
+      renderTravellerRows(group);
+      renderSplit();
+    });
+  });
+}
+
+function renderSplit(){
+  const container = document.getElementById('splitContent');
+  const tilesEl = document.getElementById('splitTiles');
+  const summaryEl = document.getElementById('splitSummary');
+  if(!container) return;
+
+  const chosenBase = allRows.find(r => r.rowKey === state.chosenKey);
+  if(!chosenBase){
+    tilesEl.innerHTML = '';
+    summaryEl.innerHTML = '';
+    container.innerHTML = `<div class="split-summary"><p>Choose a vehicle — either from this dropdown, or hit "Choose →" on any row in the Pick your vehicle tab.</p></div>`;
+    renderCalendar(null);
+    return;
+  }
+
+  const group = findGroupForSelection();
+  const rows = currentRows();
+  const chosen = rows.find(r => r.rowKey === state.chosenKey);
+  renderTravellerRows(group);
+
+  if(!group || !chosen || chosen.grandTotal === null){
+    tilesEl.innerHTML = '';
+    summaryEl.innerHTML = `<h3>${escapeHtml(chosenBase.vehicleName)}</h3><p>${escapeHtml(chosenBase.company)}</p><p style="margin-top:8px">Pricing isn't available for this vehicle on the currently selected pick up / drop off dates.</p>`;
+    container.innerHTML = '';
+    renderCalendar(null);
+    return;
+  }
+
+  const totalDays = group.days;
+  const priceAud = chosen.price ? chosen.price.aud : null;
+
+  tilesEl.innerHTML = `
+    <div class="tile" style="background:var(--turquoise-bg)">
+      <div class="tile-label" style="color:var(--turquoise-text)">Vehicle cost</div>
+      <div class="tile-price" style="color:var(--turquoise-text)">$${fmtMoney(priceAud)}</div>
+    </div>
+    <div class="tile" style="background:var(--gold-bg)">
+      <div class="tile-label" style="color:var(--gold-text)">Insurance estimate</div>
+      <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(chosen.insuranceTotal)}</div>
+    </div>
+    <div class="tile" style="background:var(--coral-bg)">
+      <div class="tile-label" style="color:var(--coral-text)">Grand total</div>
+      <div class="tile-price" style="color:var(--coral-text)">$${fmtMoney(chosen.grandTotal)}</div>
+    </div>
+    <div class="tile" style="background:var(--plum-bg)">
+      <div class="tile-label" style="color:var(--plum-text)">Grand total / day</div>
+      <div class="tile-price" style="color:var(--plum-text)">$${fmtMoney(chosen.grandTotalDay)}</div>
+    </div>`;
+
+  summaryEl.innerHTML = `<h3>${escapeHtml(chosenBase.vehicleName)}</h3>
+    <p>${escapeHtml(chosenBase.company)} · ${formatDateLabel(group.startDate)} → ${formatDateLabel(group.endDate)} · ${totalDays} days</p>`;
+
+  const dailyRate = chosen.grandTotalDay;
+  const totals = state.travellers.map(() => 0);
+  const presentDays = state.travellers.map(() => 0);
+  for(let d = 0; d < totalDays; d++){
+    const day = new Date(group.startDate);
+    day.setDate(day.getDate() + d);
+    const presentIdx = [];
+    state.travellers.forEach((t, i) => {
+      const ret = clampDate(t.returnDate ? fromISODate(t.returnDate) : group.endDate, group.startDate, group.endDate);
+      if(day < ret){ presentIdx.push(i); presentDays[i]++; }
+    });
+    if(!presentIdx.length) continue;
+    const share = dailyRate / presentIdx.length;
+    presentIdx.forEach(i => { totals[i] += share; });
+  }
+
+  const barHtml = state.travellers.map((t, i) => {
+    const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
+    const pct = chosen.grandTotal ? Math.max(1, (totals[i] / chosen.grandTotal) * 100) : 0;
+    return `<div style="background:${c.text};width:${pct}%">${escapeHtml(t.name || 'T' + (i+1))}</div>`;
+  }).join('');
+
+  const cardsHtml = state.travellers.map((t, i) => {
+    const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
+    return `<div class="split-card" style="background:${c.bg}">
+      <div class="tile-label" style="color:${c.text}">${escapeHtml(t.name || 'Traveller ' + (i+1))}</div>
+      <div class="amount" style="color:${c.text}">$${fmtMoney(totals[i])}</div>
+      <div class="tile-sub" style="color:${c.text}">${presentDays[i]} of ${totalDays} days</div>
+    </div>`;
+  }).join('');
+
+  const sumTotals = totals.reduce((a,b) => a + b, 0);
+
+  container.innerHTML = `
+    <div class="split-bar">${barHtml}</div>
+    <div class="split-cards">${cardsHtml}</div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">Owed across all travellers: $${fmtMoney(sumTotals)} (grand total $${fmtMoney(chosen.grandTotal)})</p>
+  `;
+  renderCalendar(group);
+}
+
 function setupControls(){
   renderDateChips();
   renderToggleGroup('typeChips', typeOptions, state.types, typeColor);
@@ -741,9 +1025,31 @@ function setupControls(){
       render();
     });
   });
+
+  document.getElementById('goToVehicleTab').addEventListener('click', () => switchTab('vehicle'));
+
+  populateVehicleSelect();
+  document.getElementById('vehicleSelect').addEventListener('change', e => {
+    state.chosenKey = e.target.value;
+    render();
+  });
+  document.getElementById('addTravellerBtn').addEventListener('click', () => {
+    const group = findGroupForSelection();
+    const fullReturn = group ? toISODate(group.endDate) : '';
+    state.travellers.push({name:'', returnDate: fullReturn});
+    renderSplit();
+  });
+
+  document.getElementById('toggleColsBtn').addEventListener('click', () => {
+    const wrap = document.getElementById('tableWrap');
+    const collapsed = wrap.classList.toggle('collapsed');
+    document.getElementById('toggleColsBtn').textContent = collapsed ? 'Show price & insurance breakdown' : 'Hide price & insurance breakdown';
+  });
 }
 
 (async function init(){
+  document.getElementById('tab-vehicle').addEventListener('click', () => switchTab('vehicle'));
+  document.getElementById('tab-split').addEventListener('click', () => switchTab('split'));
   try{
     await loadData();
     setupControls();
