@@ -21,8 +21,8 @@
   --teal-bg:#A8E6DC; --teal-text:#146A5C;
   --green-bg:#D9F0D6; --green-text:#3D7A4A;
   --plum-bg:#9C3868; --plum-text:#FBF6EC;
-  --babypink-bg:#FFF0F5; --babypink-border:#F9C9DC;
-  --vehiclepink-bg:#F7B8D2; --vehiclepink-border:#DB84A8;
+  --babypink-bg:#FFD0CB; --babypink-border:#F0A79E;
+  --vehiclepink-bg:#F6A6A4; --vehiclepink-border:#E37C77;
 }
 *{box-sizing:border-box;}
 html{-webkit-text-size-adjust:100%;overflow-x:hidden;width:100%;}
@@ -126,9 +126,9 @@ tr.chosen-row td{background:#F3ECFA;}
 .cal-day.cal-in-trip{background:var(--vehiclepink-bg);border-color:var(--vehiclepink-border);}
 .cal-daynum{font-size:11px;color:var(--ink);font-weight:600;}
 .cal-dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
-.cal-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
+.cal-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;border:1px solid rgba(58,54,46,0.25);}
 .cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--ink);}
-.cal-legend .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+.cal-legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid rgba(58,54,46,0.25);}
 
 .receipt-wrap{max-width:400px;margin:22px auto;}
 .receipt-edge{height:11px;background:linear-gradient(-45deg,#FFFDF8 6px,transparent 6px) 0 0,linear-gradient(45deg,#FFFDF8 6px,transparent 6px) 0 0;background-size:12px 12px;background-repeat:repeat-x;}
@@ -192,7 +192,7 @@ tr.chosen-row td{background:#F3ECFA;}
 <header class="hero">
   <div class="hero-inner">
     <h1>NZ Noodles Road Trip</h1>
-    <p>South Island, New Zealand — November 2026</p>
+    <p><span style="font-family:'Fraunces',serif;font-weight:600;font-style:italic">South Island, Aotearoa New Zealand</span></p>
     <p class="emoji-line" style="font-size:22px;letter-spacing:8px;margin-top:8px">🦜🥾🌿🚐🏔️🗺️🏕️🌌</p>
   </div>
 </header>
@@ -260,8 +260,8 @@ tr.chosen-row td{background:#F3ECFA;}
       <table>
         <thead>
           <tr>
-            <th data-key="company">Company</th>
-            <th data-key="vehicle">Vehicle</th>
+            <th data-key="company" style="width:115px">Company</th>
+            <th data-key="vehicle" style="width:175px">Vehicle</th>
             <th data-key="type">Type</th>
             <th data-key="transmission">Transmission</th>
             <th data-key="sleeps" class="col-center">Sleeps</th>
@@ -270,8 +270,8 @@ tr.chosen-row td{background:#F3ECFA;}
             <th data-key="priceAUD" class="col-extra">Price</th>
             <th data-key="priceDayAUD" class="col-extra">Per day</th>
             <th data-key="insurance" class="col-extra">Insurance total — est.*</th>
-            <th data-key="grandTotal" class="col-center" style="max-width:90px" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">Grand total — est.*</th>
-            <th data-key="grandTotalDay" class="col-center" style="max-width:90px">Grand total/day — est.*</th>
+            <th data-key="grandTotal" class="col-center" style="max-width:90px;font-size:11px" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">Grand total — est.*</th>
+            <th data-key="grandTotalDay" class="col-center" style="max-width:90px;font-size:11px">Grand total/day — est.*</th>
             <th>Split</th>
           </tr>
         </thead>
@@ -291,6 +291,7 @@ tr.chosen-row td{background:#F3ECFA;}
 
 <div class="page-layout" id="page-shortlist" style="display:none">
   <div class="left-col">
+    <p style="font-family:'Fraunces',serif;font-weight:600;font-style:italic;font-size:22px;color:var(--heading);margin:0 0 14px">Our pick of the roomier vans — every campervan and motorhome here has 3 or more beds, so there's space to stretch out.</p>
     <div class="controls">
       <div class="control-group">
         <span class="control-label">Trip dates</span>
@@ -325,6 +326,7 @@ tr.chosen-row td{background:#F3ECFA;}
 
 <div class="page-layout" id="page-split" style="display:none">
   <div class="left-col">
+    <p style="font-family:'Fraunces',serif;font-weight:600;font-style:italic;font-size:22px;color:var(--heading);margin:0 0 14px">This tool splits the cost and calculates what each traveller owes by tracking exactly which days they're actually in NZ, based on the return date entered below.</p>
     <div class="controls">
       <div class="control-group">
         <span class="control-label">Chosen vehicle</span>
@@ -477,6 +479,7 @@ function clampDate(d, min, max){
 }
 const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 function formatDateLabel(d){
   return `${WEEKDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
 }
@@ -568,10 +571,10 @@ async function loadData(){
   const defaultGroup = dateOptions.find(g => dateKey(g.startDate) === state.pickup && dateKey(g.endDate) === state.dropoff);
   const fullReturn = defaultGroup ? toISODate(defaultGroup.endDate) : '';
   state.travellers = [
-    {name:'', returnDate: fullReturn},
-    {name:'', returnDate: fullReturn},
-    {name:'', returnDate: fullReturn},
-    {name:'', returnDate: fullReturn}
+    {name:'', returnDate: fullReturn, customized:false},
+    {name:'', returnDate: fullReturn, customized:false},
+    {name:'', returnDate: fullReturn, customized:false},
+    {name:'', returnDate: fullReturn, customized:false}
   ];
 
   allRows = [];
@@ -768,6 +771,15 @@ function companyPromoBadgeInline(company){
   }
   return '';
 }
+const VEHICLE_PHOTOS = {
+  'Comfort Plus': 'https://images.prismic.io/indiecampers-demo/aj1W3lbRV8_Qf4rv_eu-california-grand-4-auto-base%404x.png?auto=format%2Ccompress&rect=6%2C0%2C4788%2C3192&w=1920&h=800&fit=max&q=75',
+  'Family Plus': 'https://images.prismic.io/indiecampers-demo/928YVfB4IAZ4Futy_ChatGPTImage3_09_2026%2C15_31_57.png?auto=format%2Ccompress&w=1920&h=800&fit=max&q=75',
+  'Big Six 6 Berth': 'https://thl.widen.net/content/fkddf6jzjl/jpeg/Mighty_Big%20Six_NZ-Family-eating-at-sunset.jpeg?position=c&color=ffffffff&quality=80&u=6jkhbk',
+  'Big Kahuna 6 Berth': 'https://cdn.jucy.com/cdn-cgi/image/width=2560,format=auto/https://storage.googleapis.com/jucy-chilwa-prod-57ad03.appspot.com/Image/2024065_Chilld_6_1472_x_980_Photo_1_fe5003d1fd/2024065_Chilld_6_1472_x_980_Photo_1_fe5003d1fd.jpg',
+  'River 6 Berth': 'https://prod-thl-retail.xperience-sites.com/getmedia/0e7355d1-2c3b-41a4-986e-edda213402ea/maui_River_YarraValley_Victoria_P1415726.jpg',
+  'Apollo Euro Deluxe': 'https://prod-thl-retail.xperience-sites.com/getmedia/8d2f6c7c-05a0-4c8e-8e45-d202540e7f5f/ApolloEuroDeluxeAliceSpringsNT052.jpg',
+  'Navigator 5 Berth': 'https://res.cloudinary.com/thl/image/upload/c_fill,f_auto,q_75,w_1180/v1765408794/rentals/britz/images/Britz%20NZ%20Summer%20Fleet_Navigator_06%20(2).jpg'
+};
 const COMPANY_LOGOS = [
   {re:/maui/i, url:'https://s3-eu-west-1.amazonaws.com/tpd/logos/5c48d44c3712100001b57163/0x0.png'},
   {re:/mighty/i, url:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpoYE6WwX7yxBk-FqWG5U_S2TbwhaZsJOjLvTnNAsO6UKhfC1RHHnC01E&s=10'},
@@ -853,7 +865,7 @@ function render(){
       ? `<span class="price-cell" style="${heatStyleFor(r.insuranceTotal, insMin, insMax)}">$${fmtMoney(r.insuranceTotal)}</span>`
       : (isSoldOut ? soldOutTag : '—');
     const gtCell = r.grandTotal !== null
-      ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)};font-size:11px" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">$${fmtMoney(r.grandTotal)}</span>`
+      ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)}" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">$${fmtMoney(r.grandTotal)}</span>`
       : (isSoldOut ? soldOutTag : '—');
 
     return `<tr class="${r.rowKey === state.chosenKey ? 'chosen-row' : ''}">
@@ -868,7 +880,7 @@ function render(){
       <td class="col-extra">${priceAUD !== null ? '$' + fmtMoney(r.price.dayAud) : (isSoldOut ? soldOutTag : '—')}</td>
       <td class="col-extra">${insCell}</td>
       <td class="col-center">${gtCell}</td>
-      <td class="col-center" style="font-size:11px">${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : (isSoldOut ? soldOutTag : '—')}</td>
+      <td class="col-center">${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : (isSoldOut ? soldOutTag : '—')}</td>
       <td><button class="choose-btn" data-key="${escapeHtml(r.rowKey)}">${r.rowKey === state.chosenKey ? 'Chosen ✓' : 'Choose →'}</button></td>
     </tr>`;
   }).join('');
@@ -925,8 +937,11 @@ function renderShortlist(){
         <div class="sl-price-row"><span>Per day</span><span>$${fmtMoney(r.grandTotalDay)}</span></div>`
       : `<p style="color:var(--coral-text);font-weight:600;font-size:12.5px;margin:4px 0">Not available for these dates</p>`;
 
+    const photoUrl = VEHICLE_PHOTOS[r.vehicleName];
+    const imageStyle = photoUrl ? `background-image:url('${photoUrl}');background-size:cover;background-position:center;` : '';
+
     return `<div class="sl-card">
-      <div class="sl-card-image">🚐${soldOutRibbon}</div>
+      <div class="sl-card-image" style="${imageStyle}">${photoUrl ? '' : '🚐'}${soldOutRibbon}</div>
       <div class="sl-card-body">
         <div class="sl-logo-row">
           ${companyLogoUrl(r.company) ? `<img class="sl-logo" src="${companyLogoUrl(r.company)}" alt="${escapeHtml(r.company)}">` : `<span class="sl-company">${escapeHtml(r.company)}</span>`}
@@ -1031,6 +1046,15 @@ function validDropoffsFor(pickupKey){
   return dropoffOptions.filter(d => dateOptions.some(g => dateKey(g.startDate) === pickupKey && dateKey(g.endDate) === d.key));
 }
 
+function syncTravellerDefaultsToDropoff(){
+  const group = findGroupForSelection();
+  if(!group) return;
+  const fullReturn = toISODate(group.endDate);
+  state.travellers.forEach(t => {
+    if(!t.customized) t.returnDate = fullReturn;
+  });
+}
+
 function renderDateChips(){
   const pContainer = document.getElementById('pickupChips');
   pContainer.innerHTML = pickupOptions.map(o => {
@@ -1047,6 +1071,8 @@ function renderDateChips(){
       if(!valid.some(d => d.key === state.dropoff)){
         state.dropoff = valid.length ? valid[0].key : null;
       }
+      syncTravellerDefaultsToDropoff();
+      renderTravellerRows(findGroupForSelection());
       renderDateChips();
       render();
     });
@@ -1062,7 +1088,13 @@ function renderDateChips(){
     return `<button class="chip" data-key="${o.key}" style="${style}">${formatDateLabel(o.date)}</button>`;
   }).join('');
   dContainer.querySelectorAll('.chip').forEach(btn => {
-    btn.addEventListener('click', () => { state.dropoff = btn.dataset.key; renderDateChips(); render(); });
+    btn.addEventListener('click', () => {
+      state.dropoff = btn.dataset.key;
+      syncTravellerDefaultsToDropoff();
+      renderTravellerRows(findGroupForSelection());
+      renderDateChips();
+      render();
+    });
   });
 }
 
@@ -1111,7 +1143,7 @@ function renderCalendar(group){
   const monthStart = new Date(year, monthIndex, 1);
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
   const startWeekday = monthStart.getDay();
-  if(title) title.textContent = `${MONTHS[monthIndex]} ${year}`;
+  if(title) title.textContent = `${MONTHS_FULL[monthIndex]} ${year}`;
 
   let cells = '';
   for(let i = 0; i < startWeekday; i++) cells += `<div class="cal-day cal-empty"></div>`;
@@ -1125,7 +1157,7 @@ function renderCalendar(group){
       const present = day >= arrivalDate && day < ret;
       if(!present) return '';
       const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
-      return `<span class="cal-dot" style="background:${c.text}" title="${escapeHtml(t.name || 'Traveller ' + (i+1))}"></span>`;
+      return `<span class="cal-dot" style="background:${c.bg}" title="${escapeHtml(t.name || 'Traveller ' + (i+1))}"></span>`;
     }).join('');
     cells += `<div class="cal-day ${dayClass}">
       <div class="cal-daynum">${d}</div>
@@ -1139,7 +1171,7 @@ function renderCalendar(group){
       `<span><span class="dot" style="background:var(--babypink-border)"></span>In NZ before pick-up</span>`;
     const travellerLegend = state.travellers.map((t, i) => {
       const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
-      return `<span><span class="dot" style="background:${c.text}"></span>${escapeHtml(t.name || 'Traveller ' + (i+1))}</span>`;
+      return `<span><span class="dot" style="background:${c.bg}"></span>${escapeHtml(t.name || 'Traveller ' + (i+1))}</span>`;
     }).join('');
     legend.innerHTML = dayLegend + travellerLegend;
   }
@@ -1160,7 +1192,12 @@ function renderTravellerRows(group){
     inp.addEventListener('input', e => { state.travellers[Number(e.target.dataset.i)].name = e.target.value; renderSplit(); });
   });
   container.querySelectorAll('.traveller-date').forEach(inp => {
-    inp.addEventListener('change', e => { state.travellers[Number(e.target.dataset.i)].returnDate = e.target.value; renderSplit(); });
+    inp.addEventListener('change', e => {
+      const t = state.travellers[Number(e.target.dataset.i)];
+      t.returnDate = e.target.value;
+      t.customized = true;
+      renderSplit();
+    });
   });
   container.querySelectorAll('[data-remove]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1190,7 +1227,6 @@ function renderSplit(){
   const group = findGroupForSelection();
   const rows = currentRows();
   const chosen = rows.find(r => r.rowKey === state.chosenKey);
-  renderTravellerRows(group);
 
   if(!group || !chosen || chosen.grandTotal === null){
     tilesEl.innerHTML = '';
@@ -1307,6 +1343,7 @@ function renderSplit(){
 
 function setupControls(){
   renderDateChips();
+  renderTravellerRows(findGroupForSelection());
   renderToggleGroup('companyChips', companyOptions, state.companies, () => ({bg:'var(--lilac-bg)', text:'var(--lilac-text)'}));
   renderToggleGroup(['typeChips','shortlistTypeChips'], typeOptions, state.types, typeColor);
   renderToggleGroup(['transChips','shortlistTransChips'], transOptions, state.transmissions, transColor);
@@ -1338,7 +1375,8 @@ function setupControls(){
   document.getElementById('addTravellerBtn').addEventListener('click', () => {
     const group = findGroupForSelection();
     const fullReturn = group ? toISODate(group.endDate) : '';
-    state.travellers.push({name:'', returnDate: fullReturn});
+    state.travellers.push({name:'', returnDate: fullReturn, customized:false});
+    renderTravellerRows(group);
     renderSplit();
   });
 
