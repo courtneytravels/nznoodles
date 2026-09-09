@@ -61,7 +61,7 @@ select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;bor
 .tile{border-radius:12px;padding:14px 16px;min-height:78px;min-width:0;}
 .tile-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:6px;}
 .tile-price{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:2px;}
-.tile-perday{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;}
+.tile-pernight{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;}
 .tile-sub{font-size:12px;opacity:0.85;}
 
 .table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);-webkit-overflow-scrolling:touch;}
@@ -185,7 +185,7 @@ tr.chosen-row td{background:#F3ECFA;}
   .hero p{font-size:14px;}
   .hero .emoji-line{font-size:18px !important;letter-spacing:4px !important;}
   .tile-price{font-size:16px;}
-  .tile-perday{font-size:11px;}
+  .tile-pernight{font-size:11px;}
   .controls{gap:8px 10px;}
   .control-group{gap:4px;}
   .chip{font-size:11px;padding:5px 10px;}
@@ -213,7 +213,7 @@ tr.chosen-row td{background:#F3ECFA;}
   .traveller-name,.traveller-date{flex:1 1 100% !important;min-width:0 !important;width:100%;}
   .tiles{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
   .tile{min-width:0;overflow-wrap:anywhere;}
-  .tile-perday{display:block;margin-top:4px;}
+  .tile-pernight{display:block;margin-top:4px;}
   .shortlist-grid{grid-template-columns:minmax(0,1fr);}
   .split-bar{height:auto;min-height:34px;}
   .split-bar > div{min-width:0;overflow-wrap:anywhere;padding:6px 2px;font-size:11px;text-align:center;}
@@ -310,17 +310,17 @@ tr.chosen-row td{background:#F3ECFA;}
             <th data-key="beds" class="col-center" style="width:130px">Beds</th>
             <th data-key="amenities" class="col-center">Amenities</th>
             <th data-key="priceAUD" class="col-extra">Price</th>
-            <th data-key="priceDayAUD" class="col-extra">Per day</th>
+            <th data-key="priceNightAUD" class="col-extra">Per night</th>
             <th data-key="insurance" class="col-extra">Insurance total — est.*</th>
             <th data-key="grandTotal" class="col-center" style="max-width:90px;font-size:11px" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">Grand total — est.*</th>
-            <th data-key="grandTotalDay" class="col-center" style="max-width:90px;font-size:11px">Grand total/day — est.*</th>
+            <th data-key="grandTotalNight" class="col-center" style="max-width:90px;font-size:11px">Grand total/night — est.*</th>
             <th>Split</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
-    <p style="font-size:12px;color:var(--muted);margin-top:8px">* This estimate combines the vehicle hire cost quoted on the rental company's website with an estimated insurance cost — calculated by averaging that vehicle's available insurance options and multiplying by the number of days hired. It isn't a locked-in quote — confirm the exact figure with the rental company at booking. Grand total and grand total/day inherit this estimate since they include insurance.</p>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">* This estimate combines the vehicle hire cost quoted on the rental company's website with an estimated insurance cost — calculated by averaging that vehicle's available per-night insurance options and multiplying by the number of nights hired. It isn't a locked-in quote — confirm the exact figure with the rental company at booking. Grand total and grand total/night inherit this estimate since they include insurance.</p>
   </div>
 
   <div class="right-col">
@@ -368,7 +368,7 @@ tr.chosen-row td{background:#F3ECFA;}
 
 <div class="page-layout" id="page-split" style="display:none">
   <div class="left-col">
-    <p style="font-family:'Fraunces',serif;font-weight:600;font-style:italic;font-size:22px;color:var(--heading);margin:0 0 14px">This tool splits the cost and calculates what each traveller owes by tracking exactly which days they're actually in NZ, based on the return date entered below — so if some travellers stay on and keep the vehicle after others fly home, the cost of those extra days is split only between the travellers still there.</p>
+    <p style="font-family:'Fraunces',serif;font-weight:600;font-style:italic;font-size:22px;color:var(--heading);margin:0 0 14px">This tool splits the total vehicle hire and estimated insurance cost across nights, starting on the pick-up date. Each night's cost is shared equally by the travellers staying that night. Your return date is excluded, so you pay through the night before you leave. The number of nights is the trip's day count minus one.</p>
     <div class="controls">
       <div class="control-group">
         <span class="control-label">Chosen vehicle</span>
@@ -404,6 +404,7 @@ tr.chosen-row td{background:#F3ECFA;}
         </div>
         <div class="cal-grid" id="calendarGrid"></div>
         <div class="cal-legend" id="calendarLegend"></div>
+        <p style="font-size:12px;color:var(--muted)">Calendar shows presence dates, including return dates. Payments cover nights before each return date.</p>
       </div>
     </div>
 
@@ -422,7 +423,7 @@ tr.chosen-row td{background:#F3ECFA;}
 const SHEET_ID = '1xURtsfFb8DAIVcRo2TWQ3GvpIF5pGluKS_4cY58POE0';
 const SHEET_NAME = 'Campervans NZ';
 const GROUP_STARTS = [9,12,15,18,21,24,27,30];
-const INSURANCE_AVG_DAY_AUD_COL = 37;
+const INSURANCE_AVG_NIGHT_AUD_COL = 37;
 
 const BUCKETS = [
   {label:'<$4500', max:4500, bg:'var(--turquoise-bg)', text:'var(--turquoise-text)'},
@@ -650,13 +651,13 @@ async function loadData(){
       const soldOut = /sold\s*out/i.test(rawText);
       return {
         aud: Number(audCell.v) || null,
-        dayAud: Number(getCell(row,start+2).v) || null,
+        nightAud: Number(getCell(row,start+2).v) || null,
         soldOut
       };
     });
 
     const insurance = {
-      avgDayAud: Number(getCell(row,INSURANCE_AVG_DAY_AUD_COL).v)
+      avgNightAud: Number(getCell(row,INSURANCE_AVG_NIGHT_AUD_COL).v)
     };
 
     const rowKey = company + '||' + vehicleName;
@@ -682,18 +683,23 @@ function findGroupForSelection(){
   return dateOptions.find(g => dateKey(g.startDate) === state.pickup && dateKey(g.endDate) === state.dropoff) || null;
 }
 
+function tripNights(group){
+  const days = Number(group?.days);
+  return Number.isFinite(days) && days >= 1 ? days - 1 : null;
+}
+
 function currentRows(){
   const group = findGroupForSelection();
   const gIdx = group ? group.groupIndex : 0;
-  const days = group ? group.days : null;
+  const nights = tripNights(group);
   return allRows.map(r => {
     const price = r.prices[gIdx];
-    const insPerDay = r.insurance && !isNaN(r.insurance.avgDayAud) ? r.insurance.avgDayAud : null;
-    const insTotal = (insPerDay !== null && days) ? insPerDay * days : null;
+    const insPerNight = r.insurance && !isNaN(r.insurance.avgNightAud) ? r.insurance.avgNightAud : null;
+    const insTotal = (insPerNight !== null && nights !== null) ? insPerNight * nights : null;
     const priceAud = price ? price.aud : null;
     const grandTotal = (priceAud !== null && insTotal !== null) ? priceAud + insTotal : null;
-    const grandTotalDay = (grandTotal !== null && days) ? grandTotal / days : null;
-    return {...r, price, insurancePerDayAud: insPerDay, insuranceTotal: insTotal, grandTotal, grandTotalDay};
+    const grandTotalNight = (grandTotal !== null && nights > 0) ? grandTotal / nights : null;
+    return {...r, price, insurancePerNightAud: insPerNight, insuranceTotal: insTotal, grandTotal, grandTotalNight};
   });
 }
 
@@ -755,10 +761,10 @@ function applyFiltersAndSort(rows){
       case 'sleeps': av=a.sleeps; bv=b.sleeps; break;
       case 'beds': av=a.beds; bv=b.beds; break;
       case 'priceAUD': av=a.price ? a.price.aud : null; bv=b.price ? b.price.aud : null; break;
-      case 'priceDayAUD': av=a.price ? a.price.dayAud : null; bv=b.price ? b.price.dayAud : null; break;
+      case 'priceNightAUD': av=a.price ? a.price.nightAud : null; bv=b.price ? b.price.nightAud : null; break;
       case 'insurance': av=a.insuranceTotal; bv=b.insuranceTotal; break;
       case 'grandTotal': av=a.grandTotal; bv=b.grandTotal; break;
-      case 'grandTotalDay': av=a.grandTotalDay; bv=b.grandTotalDay; break;
+      case 'grandTotalNight': av=a.grandTotalNight; bv=b.grandTotalNight; break;
       default: av=''; bv='';
     }
     if(av === null || av === undefined) av = state.sortDir === 'asc' ? Infinity : -Infinity;
@@ -846,22 +852,22 @@ function computeTiles(rows){
   const twoPlus = priced.filter(r => parseBedCount(r.beds) > 2);
   const cheapest2 = twoPlus.length ? twoPlus.reduce((a,b) => b.grandTotal < a.grandTotal ? b : a) : null;
   const avg = priced.reduce((s,r) => s + r.grandTotal, 0) / priced.length;
-  const avgDay = priced.reduce((s,r) => s + (r.grandTotalDay || 0), 0) / priced.length;
+  const avgNight = priced.reduce((s,r) => s + (r.grandTotalNight || 0), 0) / priced.length;
   const highest = priced.reduce((a,b) => b.grandTotal > a.grandTotal ? b : a);
-  return {cheapest, cheapest2, avg, avgDay, highest};
+  return {cheapest, cheapest2, avg, avgNight, highest};
 }
 
-function renderTiles(rows, days){
+function renderTiles(rows, nights){
   const container = document.getElementById('tilesRow');
   const t = computeTiles(rows);
   if(!t){ container.innerHTML = ''; return; }
-  const dTxt = days ? ` (${days}d)` : '';
+  const nightsText = nights !== null ? ` (${nights} nights)` : '';
   const noteHtml = text => `<div class="tile-note" style="color:${text}">Estimate: vehicle hire + insurance</div>`;
   const optionTile = (label, bg, text, row) => {
     if(!row) return `<div class="tile" style="background:${bg}"><div class="tile-label" style="color:${text}">${label}</div><div class="tile-price" style="color:${text}">—</div>${noteHtml(text)}</div>`;
     return `<div class="tile" style="background:${bg}">
       <div class="tile-label" style="color:${text}">${label}</div>
-      <div class="tile-price" style="color:${text}">$${fmtMoney(row.grandTotal)}<span class="tile-perday" style="color:${text}"> · $${fmtMoney(row.grandTotalDay)}/day${dTxt}</span></div>
+      <div class="tile-price" style="color:${text}">$${fmtMoney(row.grandTotal)}<span class="tile-pernight" style="color:${text}"> · $${fmtMoney(row.grandTotalNight)}/night${nightsText}</span></div>
       <div class="tile-sub" style="color:${text}">${escapeHtml(row.vehicleName)} · ${escapeHtml(row.company)}</div>
       ${noteHtml(text)}
     </div>`;
@@ -871,7 +877,7 @@ function renderTiles(rows, days){
     optionTile('Cheapest, >2 beds', 'var(--lilac-bg)', 'var(--lilac-text)', t.cheapest2) +
     `<div class="tile" style="background:var(--gold-bg)">
       <div class="tile-label" style="color:var(--gold-text)">Average grand total</div>
-      <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(t.avg)}<span class="tile-perday" style="color:var(--gold-text)"> · $${fmtMoney(t.avgDay)}/day${dTxt}</span></div>
+      <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(t.avg)}<span class="tile-pernight" style="color:var(--gold-text)"> · $${fmtMoney(t.avgNight)}/night${nightsText}</span></div>
       <div class="tile-sub" style="color:var(--gold-text)">Across ${document.getElementById('tbody').children.length} matching vehicles</div>
       ${noteHtml('var(--gold-text)')}
     </div>` +
@@ -923,10 +929,10 @@ function render(){
       <td class="wrap col-center">${escapeHtml(r.beds)}</td>
       <td class="col-center">${amenityIcon(r.toilet,'T')}${amenityIcon(r.shower,'S')}</td>
       <td class="col-extra">${priceCell}</td>
-      <td class="col-extra">${priceAUD !== null ? '$' + fmtMoney(r.price.dayAud) : (isSoldOut ? soldOutTag : '—')}</td>
+      <td class="col-extra">${priceAUD !== null ? '$' + fmtMoney(r.price.nightAud) : (isSoldOut ? soldOutTag : '—')}</td>
       <td class="col-extra">${insCell}</td>
       <td class="col-center">${gtCell}</td>
-      <td class="col-center">${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : (isSoldOut ? soldOutTag : '—')}</td>
+      <td class="col-center">${r.grandTotalNight !== null ? '$' + fmtMoney(r.grandTotalNight) : (isSoldOut ? soldOutTag : '—')}</td>
       <td><button class="choose-btn" data-key="${escapeHtml(r.rowKey)}">${r.rowKey === state.chosenKey ? 'Chosen ✓' : 'Choose →'}</button></td>
     </tr>`;
   }).join('');
@@ -938,14 +944,14 @@ function render(){
       render();
     });
   });
-  renderTiles(rows, days);
+  renderTiles(rows, tripNights(group));
   populateVehicleSelect();
   renderSplit();
   renderShortlist();
 
   const badge = document.getElementById('tripLengthBadge');
   if(badge){
-    badge.textContent = days ? `${days} days selected` : 'Select pick up + drop off';
+    badge.textContent = days ? `${days} days (${tripNights(group)} nights) selected` : 'Select pick up + drop off';
   }
 }
 
@@ -958,7 +964,7 @@ function renderShortlist(){
   const datesBadge = document.getElementById('shortlistDatesBadge');
   if(datesBadge){
     datesBadge.textContent = group
-      ? `${formatDateLabel(group.startDate)} → ${formatDateLabel(group.endDate)} (${group.days}d) · change`
+      ? `${formatDateLabel(group.startDate)} → ${formatDateLabel(group.endDate)} (${tripNights(group)} nights) · change`
       : 'Select dates';
   }
 
@@ -980,7 +986,7 @@ function renderShortlist(){
         <div class="sl-price-row"><span>Vehicle hire</span><span>$${fmtMoney(priceAud)}</span></div>
         <div class="sl-price-row"><span>Insurance est.</span><span>$${fmtMoney(r.insuranceTotal)}</span></div>
         <div class="sl-grand"><span style="font-size:12px;color:var(--muted)">Grand total est.*</span><span class="amount">$${fmtMoney(r.grandTotal)}</span></div>
-        <div class="sl-price-row"><span>Per day</span><span>$${fmtMoney(r.grandTotalDay)}</span></div>`
+        <div class="sl-price-row"><span>Per night</span><span>$${fmtMoney(r.grandTotalNight)}</span></div>`
       : `<p style="color:var(--coral-text);font-weight:600;font-size:12.5px;margin:4px 0">Not available for these dates</p>`;
 
     const photoUrl = VEHICLE_PHOTOS[r.vehicleName];
@@ -1215,7 +1221,7 @@ function renderCalendar(group){
   grid.innerHTML = cells;
 
   if(legend){
-    const dayLegend = `<span><span class="dot" style="background:var(--vehiclepink-border)"></span>Vehicle days</span>` +
+    const dayLegend = `<span><span class="dot" style="background:var(--vehiclepink-border)"></span>Vehicle dates</span>` +
       `<span><span class="dot" style="background:var(--babypink-border)"></span>In NZ before pick-up</span>`;
     const travellerLegend = state.travellers.map((t, i) => {
       const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
@@ -1285,7 +1291,16 @@ function renderSplit(){
     return;
   }
 
-  const totalDays = group.days;
+  const totalNights = tripNights(group);
+  if(!Number.isFinite(totalNights) || totalNights < 1){
+    tilesEl.innerHTML = '';
+    summaryEl.innerHTML = '<h3>No overnight stay</h3><p>The selected trip has no nights to split. Choose a trip with at least one night.</p>';
+    container.innerHTML = '';
+    document.getElementById('receiptWrap').style.display = 'none';
+    renderCalendar(group);
+    return;
+  }
+  const nightlyRate = chosen.grandTotal / totalNights;
   const priceAud = chosen.price ? chosen.price.aud : null;
 
   tilesEl.innerHTML = `
@@ -1305,27 +1320,26 @@ function renderSplit(){
       <div class="tile-note" style="color:var(--coral-text)">Estimate: vehicle hire + insurance</div>
     </div>
     <div class="tile" style="background:var(--plum-bg)">
-      <div class="tile-label" style="color:var(--plum-text)">Grand total / day</div>
-      <div class="tile-price" style="color:var(--plum-text)">$${fmtMoney(chosen.grandTotalDay)}</div>
+      <div class="tile-label" style="color:var(--plum-text)">Grand total / night</div>
+      <div class="tile-price" style="color:var(--plum-text)">$${fmtMoney(nightlyRate)}</div>
       <div class="tile-note" style="color:var(--plum-text)">Estimate: vehicle hire + insurance</div>
     </div>`;
 
   summaryEl.innerHTML = `<h3>${escapeHtml(chosenBase.vehicleName)}</h3>
-    <p>${escapeHtml(chosenBase.company)} · ${formatDateLabel(group.startDate)} → ${formatDateLabel(group.endDate)} · ${totalDays} days</p>`;
+    <p>${escapeHtml(chosenBase.company)} · ${formatDateLabel(group.startDate)} → ${formatDateLabel(group.endDate)} · ${totalNights} nights</p>`;
 
-  const dailyRate = chosen.grandTotalDay;
   const totals = state.travellers.map(() => 0);
-  const presentDays = state.travellers.map(() => 0);
-  for(let d = 0; d < totalDays; d++){
+  const presentNights = state.travellers.map(() => 0);
+  for(let d = 0; d < totalNights; d++){
     const day = new Date(group.startDate);
     day.setDate(day.getDate() + d);
     const presentIdx = [];
     state.travellers.forEach((t, i) => {
       const ret = clampDate(t.returnDate ? fromISODate(t.returnDate) : group.endDate, group.startDate, group.endDate);
-      if(day <= ret){ presentIdx.push(i); presentDays[i]++; }
+      if(day < ret){ presentIdx.push(i); presentNights[i]++; }
     });
     if(!presentIdx.length) continue;
-    const share = dailyRate / presentIdx.length;
+    const share = nightlyRate / presentIdx.length;
     presentIdx.forEach(i => { totals[i] += share; });
   }
 
@@ -1340,7 +1354,7 @@ function renderSplit(){
     return `<div class="split-card" style="background:${c.bg}">
       <div class="tile-label" style="color:${c.text}">${escapeHtml(t.name || 'Traveller ' + (i+1))}</div>
       <div class="amount" style="color:${c.text}">$${fmtMoney(totals[i])}</div>
-      <div class="tile-sub" style="color:${c.text}">${presentDays[i]} of ${totalDays} days</div>
+      <div class="tile-sub" style="color:${c.text}">${presentNights[i]} of ${totalNights} nights</div>
     </div>`;
   }).join('');
 
@@ -1352,7 +1366,7 @@ function renderSplit(){
     <p style="font-size:12px;color:var(--muted);margin-top:10px">Owed across all travellers: $${fmtMoney(sumTotals)} (grand total $${fmtMoney(chosen.grandTotal)})</p>
   `;
 
-  const vehicleDay = chosen.price ? chosen.price.dayAud : null;
+  const vehicleNight = priceAud !== null ? priceAud / totalNights : null;
   const contribLines = state.travellers.map((t, i) =>
     `<div class="r-line"><span>${escapeHtml(t.name || 'Traveller ' + (i+1))}</span><span>$${fmtMoney(totals[i])}</span></div>`
   ).join('');
@@ -1367,17 +1381,17 @@ function renderSplit(){
     <hr>
     <div class="r-line"><strong>${escapeHtml(chosenBase.vehicleName)}</strong></div>
     <div class="r-sub">${escapeHtml(chosenBase.company)}</div>
-    <div class="r-sub">${formatDateLabel(group.startDate)} — ${formatDateLabel(group.endDate)} (${totalDays} days)</div>
+    <div class="r-sub">${formatDateLabel(group.startDate)} — ${formatDateLabel(group.endDate)} (${totalNights} nights)</div>
     <hr>
     <div class="r-section-label">VEHICLE HIRE</div>
     <div class="r-line"><span>Total</span><span>$${fmtMoney(priceAud)}</span></div>
-    <div class="r-sub-line"><span>Per day</span><span>$${fmtMoney(vehicleDay)}</span></div>
+    <div class="r-sub-line"><span>Per night</span><span>$${fmtMoney(vehicleNight)}</span></div>
     <div class="r-section-label" style="margin-top:8px">INSURANCE (estimate)</div>
     <div class="r-line"><span>Total</span><span>$${fmtMoney(chosen.insuranceTotal)}</span></div>
-    <div class="r-sub-line"><span>Per day</span><span>$${fmtMoney(chosen.insurancePerDayAud)}</span></div>
+    <div class="r-sub-line"><span>Per night</span><span>$${fmtMoney(chosen.insuranceTotal / totalNights)}</span></div>
     <hr>
     <div class="r-line r-total"><span>GRAND TOTAL</span><span>$${fmtMoney(chosen.grandTotal)}</span></div>
-    <div class="r-sub-line"><span>Per day</span><span>$${fmtMoney(chosen.grandTotalDay)}</span></div>
+    <div class="r-sub-line"><span>Per night</span><span>$${fmtMoney(nightlyRate)}</span></div>
     <hr>
     <div class="r-section-label">CONTRIBUTIONS</div>
     ${contribLines}
