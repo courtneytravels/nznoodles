@@ -27,7 +27,9 @@
 *{box-sizing:border-box;}
 html{-webkit-text-size-adjust:100%;overflow-x:hidden;width:100%;}
 body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);overflow-x:hidden;width:100%;}
-.hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);}
+.hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);position:relative;}
+.home-btn{position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.88);color:#3D2350;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:8px 14px;border-radius:20px;text-decoration:none;white-space:nowrap;}
+.home-btn:hover{background:#fff;}
 .hero-inner{max-width:1600px;margin:0 auto;}
 .hero h1{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:44px;margin:0 0 8px;color:#3D2350;}
 .hero p{margin:0;font-size:16px;color:#4A2E49;}
@@ -171,6 +173,7 @@ tr.chosen-row td{background:#F3ECFA;}
   .right-col img{width:200px;flex:0 0 auto;}
   .hero{padding:36px 16px 28px;}
   .hero h1{font-size:32px;}
+  .home-btn{top:12px;right:12px;font-size:11px;padding:6px 11px;}
   nav.tabs{padding:0 16px;}
 }
 
@@ -190,6 +193,7 @@ tr.chosen-row td{background:#F3ECFA;}
 <body>
 
 <header class="hero">
+  <a class="home-btn" href="https://courtneytravels.github.io/nznoodles">← Back home</a>
   <div class="hero-inner">
     <h1>NZ Noodles Road Trip</h1>
     <p><span style="font-family:'Fraunces',serif;font-weight:600;font-style:italic">South Island, Aotearoa New Zealand</span></p>
