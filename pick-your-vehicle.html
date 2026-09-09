@@ -25,8 +25,8 @@
   --vehiclepink-bg:#F6A6A4; --vehiclepink-border:#E37C77;
 }
 *{box-sizing:border-box;}
-html{-webkit-text-size-adjust:100%;width:100%;}
-body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);width:100%;}
+html{-webkit-text-size-adjust:100%;width:100%;overflow-x:hidden;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);width:100%;overflow-x:hidden;}
 .hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);position:relative;}
 .home-btn{position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.88);color:#3D2350;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:8px 14px;border-radius:20px;text-decoration:none;white-space:nowrap;}
 .home-btn:hover{background:#fff;}
@@ -133,8 +133,8 @@ tr.chosen-row td{background:#F3ECFA;}
 .cal-legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid rgba(58,54,46,0.25);}
 
 .split-side-by-side{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;}
-.split-side-by-side .receipt-wrap{flex:1 1 380px;max-width:460px;margin:22px 0 0;}
-.split-side-by-side .calendar{flex:1.6 1 460px;max-width:760px;margin:22px 0 0;}
+.split-side-by-side .receipt-wrap{flex:1 1 380px;max-width:460px;min-width:0;margin:22px 0 0;}
+.split-side-by-side .calendar{flex:1.6 1 460px;max-width:760px;min-width:0;margin:22px 0 0;}
 .receipt-wrap{max-width:400px;margin:22px auto;}
 .receipt-edge{height:11px;background:linear-gradient(-45deg,#FFFDF8 6px,transparent 6px) 0 0,linear-gradient(45deg,#FFFDF8 6px,transparent 6px) 0 0;background-size:12px 12px;background-repeat:repeat-x;}
 .receipt-edge.bottom{transform:rotate(180deg);}
@@ -184,10 +184,15 @@ tr.chosen-row td{background:#F3ECFA;}
   .hero h1{font-size:26px;}
   .hero p{font-size:14px;}
   .hero .emoji-line{font-size:18px !important;letter-spacing:4px !important;}
-  .tile-price{font-size:18px;}
-  .controls{gap:10px;}
+  .tile-price{font-size:16px;}
+  .tile-perday{font-size:11px;}
+  .controls{gap:8px 10px;}
+  .control-group{gap:4px;}
+  .chip{font-size:11px;padding:5px 10px;}
   .chip-row{max-width:100% !important;}
   #bedsChips{max-width:100% !important;}
+  .tiles{grid-template-columns:1fr 1fr !important;gap:8px;}
+  .tile{padding:10px 12px;min-height:auto;}
   .right-col img{width:160px;}
   th,td{padding:8px 10px;}
 }
@@ -333,7 +338,7 @@ tr.chosen-row td{background:#F3ECFA;}
 
 <div class="page-layout" id="page-split" style="display:none">
   <div class="left-col">
-    <p style="font-family:'Fraunces',serif;font-weight:600;font-style:italic;font-size:22px;color:var(--heading);margin:0 0 14px">This tool splits the cost and calculates what each traveller owes by tracking exactly which days they're actually in NZ, based on the return date entered below.</p>
+    <p style="font-family:'Fraunces',serif;font-weight:600;font-style:italic;font-size:22px;color:var(--heading);margin:0 0 14px">This tool splits the cost and calculates what each traveller owes by tracking exactly which days they're actually in NZ, based on the return date entered below — so if some travellers stay on and keep the vehicle after others fly home, the cost of those extra days is split only between the travellers still there.</p>
     <div class="controls">
       <div class="control-group">
         <span class="control-label">Chosen vehicle</span>
