@@ -149,7 +149,7 @@ tr.chosen-row td{background:#F3ECFA;}
 
 .shortlist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-top:4px;}
 .sl-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 14px rgba(58,54,46,0.08);display:flex;flex-direction:column;}
-.sl-card-image{height:140px;background:linear-gradient(135deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);display:flex;align-items:center;justify-content:center;font-size:46px;position:relative;}
+.sl-card-image{height:190px;background:linear-gradient(135deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);display:flex;align-items:center;justify-content:center;font-size:46px;position:relative;}
 .sl-soldout-badge{position:absolute;top:10px;right:10px;background:var(--coral-text);color:#fff;font-size:10px;font-weight:700;letter-spacing:0.03em;padding:4px 9px;border-radius:6px;}
 .sl-card-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1;}
 .sl-company{font-size:10.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);}
@@ -776,6 +776,7 @@ function companyPromoBadgeInline(company){
   return '';
 }
 const VEHICLE_PHOTOS = {
+  'Polaris 6': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCEa4gsgKHQgOrJcWPHg7zhbCdPzsDxR0WQNQ4KGd5YesVpUKWMP36OiA&s=10',
   'Comfort Plus': 'https://images.prismic.io/indiecampers-demo/aj1W3lbRV8_Qf4rv_eu-california-grand-4-auto-base%404x.png?auto=format%2Ccompress&rect=6%2C0%2C4788%2C3192&w=1920&h=800&fit=max&q=75',
   'Family Plus': 'https://images.prismic.io/indiecampers-demo/928YVfB4IAZ4Futy_ChatGPTImage3_09_2026%2C15_31_57.png?auto=format%2Ccompress&w=1920&h=800&fit=max&q=75',
   'Big Six 6 Berth': 'https://thl.widen.net/content/fkddf6jzjl/jpeg/Mighty_Big%20Six_NZ-Family-eating-at-sunset.jpeg?position=c&color=ffffffff&quality=80&u=6jkhbk',
@@ -1158,7 +1159,7 @@ function renderCalendar(group){
     const dayClass = inVehicleTrip ? 'cal-in-trip' : (inPrePickup ? 'cal-pre-pickup' : '');
     const dots = state.travellers.map((t, i) => {
       const ret = clampDate(t.returnDate ? fromISODate(t.returnDate) : group.endDate, arrivalDate, group.endDate);
-      const present = day >= arrivalDate && day < ret;
+      const present = day >= arrivalDate && day <= ret;
       if(!present) return '';
       const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
       return `<span class="cal-dot" style="background:${c.bg}" title="${escapeHtml(t.name || 'Traveller ' + (i+1))}"></span>`;
@@ -1278,7 +1279,7 @@ function renderSplit(){
     const presentIdx = [];
     state.travellers.forEach((t, i) => {
       const ret = clampDate(t.returnDate ? fromISODate(t.returnDate) : group.endDate, group.startDate, group.endDate);
-      if(day < ret){ presentIdx.push(i); presentDays[i]++; }
+      if(day <= ret){ presentIdx.push(i); presentDays[i]++; }
     });
     if(!presentIdx.length) continue;
     const share = dailyRate / presentIdx.length;
