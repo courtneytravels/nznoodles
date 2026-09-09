@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NZ Noodles Road Trip 🦜🥾🌿🚐🏔️🗺️🏕️🌌 — Pick your vehicle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBF6EC;
+  --ink:#3A362E;
+  --muted:#8B8578;
+  --border:#E4DCC8;
+  --heading:#6B4A8C;
+  --turquoise-bg:#B9EDE9; --turquoise-text:#1F5C58;
+  --gold-bg:#FFE8B8; --gold-text:#8A5A12;
+  --pink-bg:#F7CBE0; --pink-text:#7A2F52;
+  --lilac-bg:#E3D3F5; --lilac-text:#5B3F7A;
+  --coral-bg:#FFD4C2; --coral-text:#A13F1E;
+  --teal-bg:#A8E6DC; --teal-text:#146A5C;
+  --green-bg:#D9F0D6; --green-text:#3D7A4A;
+  --plum-bg:#9C3868; --plum-text:#FBF6EC;
+  --babypink-bg:#FFD0CB; --babypink-border:#F0A79E;
+  --vehiclepink-bg:#F6A6A4; --vehiclepink-border:#E37C77;
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;width:100%;overflow-x:hidden;}
+body{margin:0;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);width:100%;overflow-x:hidden;}
+.hero{padding:56px 24px 40px;background:linear-gradient(180deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);position:relative;}
+.home-btn{position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.88);color:#3D2350;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:8px 14px;border-radius:20px;text-decoration:none;white-space:nowrap;}
+.home-btn:hover{background:#fff;}
+.hero-inner{max-width:1600px;margin:0 auto;}
+.hero h1{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:44px;margin:0 0 8px;color:#3D2350;}
+.hero p{margin:0;font-size:16px;color:#4A2E49;}
+.hero .emoji-line{overflow-wrap:anywhere;}
+nav.tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--border);background:var(--paper);}
+nav.tabs .tabs-inner{max-width:1600px;margin:0 auto;display:flex;gap:4px;width:100%;}
+nav.tabs button{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;padding:14px 18px;border:none;background:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--muted);}
+nav.tabs button.active{color:var(--heading);border-bottom-color:var(--teal-text);}
+
+.page-layout{display:flex;gap:28px;align-items:flex-start;max-width:1600px;margin:0 auto;padding:24px;}
+.left-col{flex:1 1 auto;min-width:0;}
+.right-col{flex:0 0 300px;display:flex;flex-direction:column;gap:16px;position:sticky;top:24px;}
+.right-col img{width:100%;height:auto;border-radius:16px;display:block;object-fit:cover;}
+
+.controls{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:20px;align-items:flex-start;max-width:100%;}
+.control-group{display:flex;flex-direction:column;gap:6px;min-width:0;max-width:100%;}
+.control-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.03em;}
+select{font-family:'Inter';font-size:13px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--ink);}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;max-width:340px;min-width:0;}
+.chip{font-family:'Inter';font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-weight:500;border:1px solid var(--border);background:#fff;color:var(--muted);}
+#bedsChips{max-width:520px;}
+#bedsChips .chip{white-space:normal;text-align:left;font-size:11px;line-height:1.3;padding:4px 10px;}
+#bucketRow .chip{white-space:nowrap;}
+
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,240px));gap:12px;margin-bottom:22px;}
+@media (max-width:1050px){
+  .tiles{grid-template-columns:repeat(2,minmax(0,260px));}
+}
+.tile{border-radius:12px;padding:14px 16px;min-height:78px;min-width:0;}
+.tile-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:6px;}
+.tile-price{font-family:'Fraunces',serif;font-size:20px;font-weight:500;margin-bottom:2px;}
+.tile-perday{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;}
+.tile-sub{font-size:12px;opacity:0.85;}
+
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);-webkit-overflow-scrolling:touch;}
+.table-wrap.collapsed .col-extra{display:none;}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;min-width:1180px;}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+td.wrap{white-space:normal;max-width:130px;font-size:10.5px;}
+th{cursor:pointer;font-weight:600;color:var(--heading);background:#F5EEDF;user-select:none;white-space:normal;vertical-align:bottom;}
+th:hover{color:var(--lilac-text);}
+th.col-center,td.col-center{text-align:center;}
+.tile-note{font-size:10px;margin-top:6px;opacity:0.75;}
+tbody tr:hover td{background:#FAF7EF;}
+.badge{display:inline-block;font-size:10.5px;padding:3px 9px;border-radius:8px;font-weight:500;}
+.amenity{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:11px;margin-right:4px;font-weight:600;}
+.amenity.on{background:var(--turquoise-bg);color:var(--turquoise-text);}
+.amenity.off{background:#EFEAE0;color:var(--muted);}
+.insurance-tier{display:inline-block;font-size:11px;padding:2px 7px;border-radius:6px;margin-right:3px;margin-bottom:3px;font-weight:500;}
+a.vehicle-link{color:var(--heading);text-decoration:none;border-bottom:1px solid var(--lilac-bg);}
+#status{padding:20px 0;color:var(--muted);font-size:14px;}
+.price-cell{font-weight:600;border-radius:6px;padding:4px 10px;display:inline-block;}
+.choose-btn{font-family:'Inter';font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;font-weight:600;border:1px solid var(--lilac-text);background:#fff;color:var(--lilac-text);}
+.promo-badge{display:inline-block;margin-top:4px;font-size:9.5px;font-weight:700;letter-spacing:0.02em;padding:2px 7px;border-radius:6px;background:var(--green-bg);color:var(--green-text);cursor:help;border-bottom:1px dotted var(--green-text);position:relative;}
+.promo-badge::after{
+  content:attr(data-tooltip);
+  position:absolute;
+  bottom:130%;
+  left:0;
+  background:#3A362E;
+  color:#FBF6EC;
+  padding:7px 10px;
+  border-radius:6px;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:normal;
+  white-space:normal;
+  width:200px;
+  line-height:1.4;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity 0.12s ease;
+  z-index:20;
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+.promo-badge:hover::after,
+.promo-badge:focus::after{
+  opacity:1;
+  visibility:visible;
+}
+tr.chosen-row td{background:#F3ECFA;}
+.split-summary{border-radius:12px;padding:16px 20px;margin-bottom:16px;background:#fff;border:1px solid var(--border);}
+.split-summary h3{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:20px;margin:0 0 4px;color:var(--heading);}
+.split-summary p{margin:0;font-size:13px;color:var(--muted);}
+.split-bar{display:flex;height:34px;border-radius:8px;overflow:hidden;margin:14px 0;}
+.split-bar div{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;}
+.split-cards{display:flex;flex-wrap:wrap;gap:12px;}
+.split-card{flex:1 1 220px;border-radius:12px;padding:14px 16px;}
+.split-card .amount{font-family:'Fraunces',serif;font-size:24px;font-weight:600;margin:4px 0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-weekday{font-size:11px;font-weight:600;color:var(--muted);text-align:center;text-transform:uppercase;padding-bottom:2px;}
+.cal-day{border-radius:8px;border:1px solid var(--border);background:#fff;min-height:68px;padding:6px 7px;}
+.cal-day.cal-empty{border:none;background:transparent;}
+.cal-day.cal-pre-pickup{background:var(--babypink-bg);border-color:var(--babypink-border);}
+.cal-day.cal-in-trip{background:var(--vehiclepink-bg);border-color:var(--vehiclepink-border);}
+.cal-daynum{font-size:12.5px;color:var(--ink);font-weight:600;}
+.cal-dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+.cal-dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto;border:1px solid rgba(58,54,46,0.25);}
+.cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--ink);}
+.cal-legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid rgba(58,54,46,0.25);}
+
+.split-side-by-side{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;}
+.split-side-by-side .receipt-wrap{flex:1 1 380px;max-width:460px;min-width:0;margin:22px 0 0;}
+.split-side-by-side .calendar{flex:1.6 1 460px;max-width:760px;min-width:0;margin:22px 0 0;}
+.receipt-wrap{max-width:400px;margin:22px auto;}
+.receipt-edge{height:11px;background:linear-gradient(-45deg,#FFFDF8 6px,transparent 6px) 0 0,linear-gradient(45deg,#FFFDF8 6px,transparent 6px) 0 0;background-size:12px 12px;background-repeat:repeat-x;}
+.receipt-edge.bottom{transform:rotate(180deg);}
+.receipt{background:#FFFDF8;padding:22px 26px;font-family:'Courier Prime','Courier New',monospace;font-size:12.5px;color:#3A362E;box-shadow:0 8px 22px rgba(58,54,46,0.14);line-height:1.55;}
+.receipt .r-head{text-align:center;margin-bottom:10px;}
+.receipt .r-title{font-weight:700;font-size:15px;letter-spacing:0.04em;}
+.receipt .r-sub{font-size:11px;color:var(--muted);}
+.receipt hr{border:none;border-top:1px dashed #C9C2B0;margin:10px 0;}
+.receipt .r-line{display:flex;justify-content:space-between;gap:8px;}
+.receipt .r-sub-line{display:flex;justify-content:space-between;gap:8px;padding-left:14px;font-size:11px;color:var(--muted);}
+.receipt .r-section-label{font-weight:700;letter-spacing:0.03em;font-size:11.5px;margin-bottom:2px;}
+.receipt .r-total{font-weight:700;font-size:13.5px;}
+.receipt .r-balance{text-align:center;font-weight:700;font-size:14px;margin-top:10px;padding-top:10px;border-top:2px dashed #C9C2B0;letter-spacing:0.03em;}
+.receipt .r-foot{text-align:center;font-size:11px;color:var(--muted);margin-top:10px;font-style:italic;}
+
+.shortlist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-top:4px;}
+.sl-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 14px rgba(58,54,46,0.08);display:flex;flex-direction:column;}
+.sl-card-image{height:190px;background:linear-gradient(135deg,#F4A6C7 0%,#F2915F 55%,#FFDFA6 100%);display:flex;align-items:center;justify-content:center;font-size:46px;position:relative;text-decoration:none;color:inherit;}
+.sl-soldout-badge{position:absolute;top:10px;right:10px;background:var(--coral-text);color:#fff;font-size:10px;font-weight:700;letter-spacing:0.03em;padding:4px 9px;border-radius:6px;}
+.sl-card-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1;}
+.sl-company{font-size:10.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);}
+.sl-logo-row{display:flex;align-items:center;gap:8px;}
+.sl-logo{height:26px;max-width:110px;object-fit:contain;background:#fff;border:1px solid var(--border);border-radius:6px;padding:4px 8px;display:block;}
+.sl-name{font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:19px;color:var(--heading);margin:2px 0 0;}
+.sl-features{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.sl-feature{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--ink);background:#F7F3E8;padding:4px 8px;border-radius:6px;}
+.sl-price-block{border-top:1px dashed var(--border);padding-top:10px;margin-top:auto;}
+.sl-price-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);}
+.sl-grand{display:flex;justify-content:space-between;align-items:baseline;margin-top:4px;}
+.sl-grand .amount{font-family:'Fraunces',serif;font-weight:600;font-size:22px;color:var(--coral-text);}
+.sl-cta{margin-top:10px;background:var(--lilac-text);color:#fff;border:none;border-radius:10px;padding:10px;font-family:'Inter';font-weight:600;font-size:13px;cursor:pointer;width:100%;}
+.sl-cta:hover{opacity:0.9;}
+.sl-cta[disabled]{cursor:not-allowed;}
+
+@media (max-width:1150px){
+  .page-layout{flex-direction:column;padding:16px;gap:20px;}
+  .right-col{flex:none;width:100%;position:static;flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;}
+  .right-col::after{content:"";flex:0 0 4px;}
+  .right-col img{width:200px;flex:0 0 auto;}
+  .hero{padding:36px 16px 28px;}
+  .hero h1{font-size:32px;}
+  .home-btn{top:12px;right:12px;font-size:11px;padding:6px 11px;}
+  nav.tabs{padding:0 16px;}
+}
+
+@media (max-width:520px){
+  .hero h1{font-size:26px;}
+  .hero p{font-size:14px;}
+  .hero .emoji-line{font-size:18px !important;letter-spacing:4px !important;}
+  .tile-price{font-size:16px;}
+  .tile-perday{font-size:11px;}
+  .controls{gap:8px 10px;}
+  .control-group{gap:4px;}
+  .chip{font-size:11px;padding:5px 10px;}
+  .chip-row{max-width:100% !important;}
+  #bedsChips{max-width:100% !important;}
+  .tiles{grid-template-columns:1fr 1fr !important;gap:8px;}
+  .tile{padding:10px 12px;min-height:auto;}
+  .right-col img{width:160px;}
+  th,td{padding:8px 10px;}
+}
+/* Mobile/tablet display overrides. Desktop rules above remain intact. */
+@media (max-width:1150px){
+  .page-layout > .left-col{width:100%;max-width:100%;flex:none;}
+  .control-group{min-width:0;max-width:100%;}
+  #vehicleSelect{width:100%;min-width:0 !important;max-width:100%;}
+  .table-wrap{width:100%;max-width:100%;}
+}
+@media (max-width:520px){
+  .hero{padding-top:48px;}
+  nav.tabs .tabs-inner{gap:0;}
+  nav.tabs button{flex:1 1 0;min-width:0;padding:12px 5px;font-size:12px;line-height:1.4;overflow-wrap:anywhere;}
+  .control-group{max-width:100%;}
+  #page-split .controls .control-group{width:100%;}
+  select,.traveller-name,.traveller-date{font-size:16px !important;max-width:100%;}
+  .traveller-name,.traveller-date{flex:1 1 100% !important;min-width:0 !important;width:100%;}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+  .tile{min-width:0;overflow-wrap:anywhere;}
+  .tile-perday{display:block;margin-top:4px;}
+  .shortlist-grid{grid-template-columns:minmax(0,1fr);}
+  .split-bar{height:auto;min-height:34px;}
+  .split-bar > div{min-width:0;overflow-wrap:anywhere;padding:6px 2px;font-size:11px;text-align:center;}
+  .split-side-by-side{gap:12px;}
+  .split-side-by-side .receipt-wrap,.split-side-by-side .calendar{flex:1 1 100%;max-width:100%;width:100%;}
+  .receipt{padding:18px 16px;overflow-wrap:anywhere;}
+  .receipt .r-line > :first-child,.receipt .r-sub-line > :first-child{min-width:0;}
+  .receipt .r-line > :last-child,.receipt .r-sub-line > :last-child{flex-shrink:0;}
+  .cal-grid{grid-template-columns:repeat(7,minmax(0,1fr));}
+  .cal-day{min-width:0;padding:5px 3px;}
+}
+
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <a class="home-btn" href="https://courtneytravels.github.io/nznoodles">← Back home</a>
+  <div class="hero-inner">
+    <h1>NZ Noodles Road Trip</h1>
+    <p><span style="font-family:'Fraunces',serif;font-weight:600;font-style:italic">South Island, Aotearoa New Zealand</span></p>
+    <p class="emoji-line" style="font-size:22px;letter-spacing:8px;margin-top:8px">🦜🥾🌿🚐🏔️🗺️🏕️🌌</p>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tabs-inner">
+    <button class="active" id="tab-vehicle">Pick your vehicle</button>
+    <button id="tab-shortlist">Campervan Shortlist</button>
+    <button id="tab-split">Split the cost</button>
+  </div>
+</nav>
+
+<div class="page-layout" id="page-vehicle">
+  <div class="left-col">
+    <div class="controls">
+      <div class="control-group">
+        <span class="control-label">Pick up</span>
+        <div class="chip-row" id="pickupChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Drop off</span>
+        <div class="chip-row" id="dropoffChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Trip length</span>
+        <div class="chip" id="tripLengthBadge" style="cursor:default;background:var(--teal-bg);color:var(--teal-text);border-color:var(--teal-text)"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Company</span>
+        <div class="chip-row" id="companyChips" style="max-width:480px"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Type</span>
+        <div class="chip-row" id="typeChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Transmission</span>
+        <div class="chip-row" id="transChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Sleeps</span>
+        <div class="chip-row" id="sleepsChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Beds</span>
+        <div class="chip-row" id="bedsChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Amenities</span>
+        <div class="chip-row" id="amenityChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Price (total trip)</span>
+        <div class="chip-row" id="bucketRow"></div>
+      </div>
+    </div>
+
+    <div class="tiles" id="tilesRow"></div>
+
+    <p id="status">Loading vehicle data from your Google Sheet…</p>
+
+    <button class="chip" id="toggleColsBtn" style="margin-bottom:10px">Show price &amp; insurance breakdown</button>
+
+    <div class="table-wrap collapsed" id="tableWrap" style="display:none">
+      <table>
+        <thead>
+          <tr>
+            <th data-key="company" style="width:115px">Company</th>
+            <th data-key="vehicle" style="width:175px">Vehicle</th>
+            <th data-key="type">Type</th>
+            <th data-key="transmission">Transmission</th>
+            <th data-key="sleeps" class="col-center">Sleeps</th>
+            <th data-key="beds" class="col-center" style="width:130px">Beds</th>
+            <th data-key="amenities" class="col-center">Amenities</th>
+            <th data-key="priceAUD" class="col-extra">Price</th>
+            <th data-key="priceDayAUD" class="col-extra">Per day</th>
+            <th data-key="insurance" class="col-extra">Insurance total — est.*</th>
+            <th data-key="grandTotal" class="col-center" style="max-width:90px;font-size:11px" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">Grand total — est.*</th>
+            <th data-key="grandTotalDay" class="col-center" style="max-width:90px;font-size:11px">Grand total/day — est.*</th>
+            <th>Split</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:8px">* This estimate combines the vehicle hire cost quoted on the rental company's website with an estimated insurance cost — calculated by averaging that vehicle's available insurance options and multiplying by the number of days hired. It isn't a locked-in quote — confirm the exact figure with the rental company at booking. Grand total and grand total/day inherit this estimate since they include insurance.</p>
+  </div>
+
+  <div class="right-col">
+    <img src="https://cdn.prod.rexby.com/image/08e59d2d94964b30acbbb95ce5b7cba2?format=webp&width=1080&height=1350&quality=80" alt="New Zealand scenery" loading="lazy">
+    <img src="https://images.unsplash.com/photo-1617677458944-b39140d92d02?ixid=M3w0NzkzMTh8MHwxfHNlYXJjaHw3fHxSb3lzJTIwUGVha3xlbnwwfHx8fDE3MjA4MzE4NTl8MA&ixlib=rb-4.0.3&auto=format&w=1080&h=1350&fit=crop&q=80" alt="New Zealand scenery" loading="lazy">
+    <img src="https://abbiejadewanders.co.uk/wp-content/uploads/2022/02/IMG_0558-2-up-scaled.jpg" alt="New Zealand scenery" loading="lazy">
+    <img src="https://trackslesstravelled.com/wp-content/uploads/2024/09/liverpool-hut-new-zealand-sunrise.jpg" alt="New Zealand scenery" loading="lazy">
+  </div>
+</div>
+
+<div class="page-layout" id="page-shortlist" style="display:none">
+  <div class="left-col">
+    <p style="font-family:'Fraunces',serif;font-weight:600;font-style:italic;font-size:22px;color:var(--heading);margin:0 0 14px">Our pick of the roomier vans — every campervan and motorhome here has 3 or more beds, so there's space to stretch out.</p>
+    <div class="controls">
+      <div class="control-group">
+        <span class="control-label">Trip dates</span>
+        <button class="chip" id="shortlistDatesBadge" style="cursor:pointer;background:var(--teal-bg);color:var(--teal-text);border-color:var(--teal-text)"></button>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Type</span>
+        <div class="chip-row" id="shortlistTypeChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Transmission</span>
+        <div class="chip-row" id="shortlistTransChips"></div>
+      </div>
+      <div class="control-group">
+        <span class="control-label">Price (total trip)</span>
+        <div class="chip-row" id="shortlistBucketRow"></div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin:0 0 16px">Showing vehicles with 3+ beds only.</p>
+    <div id="shortlistGrid" class="shortlist-grid"></div>
+    <p id="shortlistEmpty" style="display:none;color:var(--muted);font-size:14px">No 3+ bed vehicles match these filters.</p>
+    <p style="font-size:12px;color:var(--muted);margin-top:14px">* This estimate combines the vehicle hire cost quoted on the rental company's website with an estimated insurance cost — see the Pick your vehicle tab for the full explanation.</p>
+  </div>
+
+  <div class="right-col">
+    <img src="https://cdn.prod.rexby.com/image/08e59d2d94964b30acbbb95ce5b7cba2?format=webp&width=1080&height=1350&quality=80" alt="New Zealand scenery" loading="lazy">
+    <img src="https://images.unsplash.com/photo-1617677458944-b39140d92d02?ixid=M3w0NzkzMTh8MHwxfHNlYXJjaHw3fHxSb3lzJTIwUGVha3xlbnwwfHx8fDE3MjA4MzE4NTl8MA&ixlib=rb-4.0.3&auto=format&w=1080&h=1350&fit=crop&q=80" alt="New Zealand scenery" loading="lazy">
+    <img src="https://abbiejadewanders.co.uk/wp-content/uploads/2022/02/IMG_0558-2-up-scaled.jpg" alt="New Zealand scenery" loading="lazy">
+    <img src="https://trackslesstravelled.com/wp-content/uploads/2024/09/liverpool-hut-new-zealand-sunrise.jpg" alt="New Zealand scenery" loading="lazy">
+  </div>
+</div>
+
+<div class="page-layout" id="page-split" style="display:none">
+  <div class="left-col">
+    <p style="font-family:'Fraunces',serif;font-weight:600;font-style:italic;font-size:22px;color:var(--heading);margin:0 0 14px">This tool splits the cost and calculates what each traveller owes by tracking exactly which days they're actually in NZ, based on the return date entered below — so if some travellers stay on and keep the vehicle after others fly home, the cost of those extra days is split only between the travellers still there.</p>
+    <div class="controls">
+      <div class="control-group">
+        <span class="control-label">Chosen vehicle</span>
+        <select id="vehicleSelect" style="min-width:280px"></select>
+      </div>
+      <div class="control-group">
+        <span class="control-label">&nbsp;</span>
+        <button class="chip" id="goToVehicleTab" style="cursor:pointer">Change pick up / drop off →</button>
+      </div>
+    </div>
+
+    <div class="tiles" id="splitTiles"></div>
+
+    <div class="split-summary" id="splitSummary"></div>
+
+    <p style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.03em;margin:0 0 8px">Travellers — everyone enters their own return date</p>
+    <div id="travellerRows"></div>
+    <button class="chip" id="addTravellerBtn" style="margin:4px 0 18px">+ Add traveller</button>
+
+    <div id="splitContent"></div>
+
+    <div class="split-side-by-side">
+      <div class="receipt-wrap" id="receiptWrap" style="display:none">
+        <div class="receipt-edge"></div>
+        <div class="receipt" id="receiptContent"></div>
+        <div class="receipt-edge bottom"></div>
+      </div>
+
+      <div class="calendar">
+        <p class="split-summary" style="margin:18px 0 10px;padding:10px 16px;font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:16px;color:var(--heading)" id="calendarTitle">November</p>
+        <div class="cal-grid" style="margin-bottom:4px">
+          <div class="cal-weekday">Sun</div><div class="cal-weekday">Mon</div><div class="cal-weekday">Tue</div><div class="cal-weekday">Wed</div><div class="cal-weekday">Thu</div><div class="cal-weekday">Fri</div><div class="cal-weekday">Sat</div>
+        </div>
+        <div class="cal-grid" id="calendarGrid"></div>
+        <div class="cal-legend" id="calendarLegend"></div>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);margin-top:14px">Insurance figures are estimates — see note on the Pick your vehicle tab.</p>
+  </div>
+
+  <div class="right-col">
+    <img src="https://cdn.prod.rexby.com/image/08e59d2d94964b30acbbb95ce5b7cba2?format=webp&width=1080&height=1350&quality=80" alt="New Zealand scenery" loading="lazy">
+    <img src="https://images.unsplash.com/photo-1617677458944-b39140d92d02?ixid=M3w0NzkzMTh8MHwxfHNlYXJjaHw3fHxSb3lzJTIwUGVha3xlbnwwfHx8fDE3MjA4MzE4NTl8MA&ixlib=rb-4.0.3&auto=format&w=1080&h=1350&fit=crop&q=80" alt="New Zealand scenery" loading="lazy">
+    <img src="https://abbiejadewanders.co.uk/wp-content/uploads/2022/02/IMG_0558-2-up-scaled.jpg" alt="New Zealand scenery" loading="lazy">
+    <img src="https://trackslesstravelled.com/wp-content/uploads/2024/09/liverpool-hut-new-zealand-sunrise.jpg" alt="New Zealand scenery" loading="lazy">
+  </div>
+</div>
+
+<script>
+const SHEET_ID = '1xURtsfFb8DAIVcRo2TWQ3GvpIF5pGluKS_4cY58POE0';
+const SHEET_NAME = 'Campervans NZ';
+const GROUP_STARTS = [9,12,15,18,21,24,27,30];
+const INSURANCE_AVG_DAY_AUD_COL = 37;
+
+const BUCKETS = [
+  {label:'<$4500', max:4500, bg:'var(--turquoise-bg)', text:'var(--turquoise-text)'},
+  {label:'$4500–6000', max:6000, bg:'var(--gold-bg)', text:'var(--gold-text)'},
+  {label:'$6000–7500', max:7500, bg:'var(--coral-bg)', text:'var(--coral-text)'},
+  {label:'$7500+', max:Infinity, bg:'var(--plum-bg)', text:'var(--plum-text)'}
+];
+
+let allRows = [];
+let dateOptions = [];
+let pickupOptions = [];
+let dropoffOptions = [];
+let companyOptions = [];
+let typeOptions = [];
+let transOptions = [];
+let sleepsOptions = [];
+
+let state = {
+  pickup: null,
+  dropoff: null,
+  chosenKey: null,
+  travellers: [],
+  companies: new Set(),
+  types: new Set(),
+  transmissions: new Set(),
+  sleepsVals: new Set(),
+  bedsCategory: new Set(),
+  toilet: false, shower: false,
+  buckets: new Set(),
+  sortKey: 'grandTotal',
+  sortDir: 'asc'
+};
+
+function escapeHtml(s){
+  if(s === null || s === undefined) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function getCell(row, idx){
+  if(!row || !row.c || !row.c[idx]) return {v:null,f:null};
+  const c = row.c[idx];
+  return {v: c.v !== undefined ? c.v : null, f: c.f !== undefined ? c.f : null};
+}
+function getBool(row, idx){
+  const {v} = getCell(row, idx);
+  if(v === null || v === '') return false;
+  if(typeof v === 'string' && /^(no|false|n)$/i.test(v.trim())) return false;
+  return true;
+}
+function extractLink(raw){
+  if(!raw) return null;
+  const m = String(raw).match(/https?:\/\/[^\s")]+/);
+  return m ? m[0] : null;
+}
+function parseGvizDate(raw){
+  if(typeof raw !== 'string') return null;
+  const m = raw.match(/Date\((\d+),(\d+),(\d+)/);
+  if(!m) return null;
+  return new Date(Number(m[1]), Number(m[2]), Number(m[3]));
+}
+function parseCellAsDate(cell){
+  const fromLiteral = parseGvizDate(cell.v);
+  if(fromLiteral) return fromLiteral;
+  const dmy = str => {
+    if(typeof str !== 'string') return null;
+    const m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if(!m) return null;
+    let day = Number(m[1]), month = Number(m[2]), year = Number(m[3]);
+    if(year < 100) year += 2000;
+    if(month > 12 && day <= 12){ const t = day; day = month; month = t; }
+    return new Date(year, month - 1, day);
+  };
+  const fromF = dmy(cell.f);
+  if(fromF) return fromF;
+  const fromV = dmy(cell.v);
+  if(fromV) return fromV;
+  if(cell.f){
+    const d = new Date(cell.f);
+    if(!isNaN(d.getTime())) return d;
+  }
+  if(typeof cell.v === 'string'){
+    const d = new Date(cell.v);
+    if(!isNaN(d.getTime())) return d;
+  }
+  return null;
+}
+function dateKey(d){ return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
+function pad2(n){ return String(n).padStart(2,'0'); }
+function toISODate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+function fromISODate(s){
+  if(!s) return null;
+  const parts = s.split('-').map(Number);
+  return new Date(parts[0], parts[1]-1, parts[2]);
+}
+function clampDate(d, min, max){
+  if(d < min) return min;
+  if(d > max) return max;
+  return d;
+}
+const WEEKDAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function formatDateLabel(d){
+  return `${WEEKDAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+}
+function parseBedCount(str){
+  if(!str) return 0;
+  const firstClause = String(str).split(/\bOR\b/i)[0];
+  let total = 0;
+  const re = /(\d+)\s*(double|single|bunk)/gi;
+  let m;
+  while((m = re.exec(firstClause))){ total += Number(m[1]); }
+  // "bunks" mentioned without its own leading number (e.g. "2 doubles + bunks") still adds beds —
+  // count that as 2 unless a number was already attached to "bunk(s)" and captured above.
+  if(/bunk/i.test(firstClause) && !/\d+\s*bunks?\b/i.test(firstClause)){
+    total += 2;
+  }
+  return total;
+}
+function bedCategoryFor(str){
+  return parseBedCount(str) >= 3 ? '3plus' : '2';
+}
+// The sheet's vehicle links are real cell hyperlinks, not a HYPERLINK() formula or plain
+// text URL — Google's public read feed only exposes the display text for those, not the
+// target. This map is a snapshot of today's links so they still work; if you add or rename
+// a vehicle, either tell me to refresh this map, or add a plain-text "Link" column to the
+// sheet and I'll switch to reading it live instead.
+const VEHICLE_LINKS = {
+  'Voyager 4 Berth': 'https://www.britz.com/nz/en/campervan-hire/4-berth-voyager-1',
+  'Navigator 5 Berth': 'https://www.britz.com/nz/en/campervan-hire/5-berth-navigator',
+  'Odyssey 4 Berth': 'https://www.britz.com/nz/en/campervan-hire/4-berth-odyssey',
+  'Apollo Endeavour Camper': 'https://www.apollocamper.com/campervan-hire-new-zealand/endeavour',
+  'Apollo Euro Quest': 'https://www.apollocamper.com/campervan-hire-new-zealand/euro-quest',
+  'Apollo Euro Camper': 'https://www.apollocamper.com/campervan-hire-new-zealand/euro-camper',
+  'Apollo Euro Deluxe': 'https://www.apollocamper.com/campervan-hire-new-zealand/euro-deluxe',
+  'Beach 4 Berth': 'https://www.maui-rentals.com/motorhome-hire-new-zealand/4-berth-campervan-beach',
+  'Cascade 4 Berth': 'https://www.maui-rentals.com/motorhome-hire-new-zealand/4-berth-campervan-cascade',
+  'River 6 Berth': 'https://www.maui-rentals.com/motorhome-hire-new-zealand/6-berth-campervan-river',
+  'Sunseeker 4 Berth': 'https://www.jucy.com/nz/en/campervans/chilld-by-jucy-4-berth-sunseeker',
+  'Condo 4 Berth': 'https://www.jucy.com/nz/en/campervans/jucy-condo',
+  'Big Kahuna 6 Berth': 'https://www.jucy.com/nz/en/campervans/chilld-big-kahuna',
+  'Polaris 4': 'https://www.starrv.com/nz/motorhome-hire-nz/4-berth-polaris',
+  'Polaris 6': 'https://www.starrv.com/nz/motorhome-hire-nz/6-berth-polaris',
+  'Double Down 4 Berth': 'https://www.mightycampers.com/campervan-hire-new-zealand/4-berth-double-down',
+  'Double Up 4 Berth': 'https://www.mightycampers.com/campervan-hire-new-zealand/4-berth-double-up',
+  'Big Six 6 Berth': 'https://www.mightycampers.com/campervan-hire-new-zealand/6-berth-big-six',
+  'Active Bunk': 'https://travel.indiecampers.com/en-us/offer/oc-active-bunk-4-manual-base?from=queenstown&to=christchurch&start=2026-11-07&end=2026-11-22',
+  'Comfort Standard Select': 'https://travel.indiecampers.com/en-us/offer/oc-comfort-standard-4-auto-select?from=queenstown&to=christchurch&start=2026-11-07&end=2026-11-22',
+  'Active Plus Select': 'https://travel.indiecampers.com/en-us/offer/oc-active-poptopnz-4-auto-select?from=queenstown&to=christchurch&start=2026-11-07&end=2026-11-22',
+  'Comfort Plus': 'https://travel.indiecampers.com/en-us/offer/oc-comfort-standardnz-5-auto-base?from=queenstown&to=christchurch&start=2026-11-07&end=2026-11-22',
+  'Family Plus': 'https://indiecampers.com/discover/en-us/rvs/oc-comfort-familynz',
+  'Active Plus': 'https://indiecampers.com/discover/en-us/rvs/oc-active-plus'
+};
+
+async function loadData(){
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('Could not reach the Google Sheet (' + res.status + ')');
+  const text = await res.text();
+  const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+  const json = JSON.parse(jsonStr);
+  const rows = json.table.rows;
+
+  dateOptions = [];
+  GROUP_STARTS.forEach((start, gIdx) => {
+    const headerRow = rows[0];
+    const startCell = getCell(headerRow, start);
+    const endCell = getCell(headerRow, start + 1);
+    const daysCell = getCell(headerRow, start + 2);
+    const startDate = parseCellAsDate(startCell);
+    const endDate = parseCellAsDate(endCell);
+    if(startDate && endDate){
+      dateOptions.push({
+        groupIndex: gIdx,
+        startDate, endDate,
+        days: Number(daysCell.v) || Number(daysCell.f) || null
+      });
+    }
+  });
+
+  const pMap = new Map(), dMap = new Map();
+  dateOptions.forEach(g => {
+    pMap.set(dateKey(g.startDate), g.startDate);
+    dMap.set(dateKey(g.endDate), g.endDate);
+  });
+  pickupOptions = Array.from(pMap.entries()).map(([key,date]) => ({key, date})).sort((a,b) => a.date - b.date);
+  dropoffOptions = Array.from(dMap.entries()).map(([key,date]) => ({key, date})).sort((a,b) => a.date - b.date);
+  state.pickup = pickupOptions[0] ? pickupOptions[0].key : null;
+  state.dropoff = dropoffOptions[0] ? dropoffOptions[0].key : null;
+
+  const defaultGroup = dateOptions.find(g => dateKey(g.startDate) === state.pickup && dateKey(g.endDate) === state.dropoff);
+  const fullReturn = defaultGroup ? toISODate(defaultGroup.endDate) : '';
+  state.travellers = [
+    {name:'', returnDate: fullReturn, customized:false},
+    {name:'', returnDate: fullReturn, customized:false},
+    {name:'', returnDate: fullReturn, customized:false},
+    {name:'', returnDate: fullReturn, customized:false}
+  ];
+
+  allRows = [];
+  const typeSet = new Set(), transSet = new Set(), sleepsSet = new Set(), companySet = new Set();
+  let lastCompany = null;
+  rows.slice(2).forEach(row => {
+    if(!row) return;
+    const rawCompany = getCell(row,0).f || getCell(row,0).v;
+    if(rawCompany) lastCompany = rawCompany;
+    const vehicleRaw = getCell(row,1);
+    const vehicleName = vehicleRaw.f || vehicleRaw.v;
+    if(!vehicleName) return;
+    const company = lastCompany;
+    const vehicleLink = extractLink(vehicleRaw.v) || extractLink(vehicleRaw.f) || VEHICLE_LINKS[vehicleName] || null;
+    const type = (getCell(row,2).f || getCell(row,2).v || '').toString();
+    const transmission = (getCell(row,3).f || getCell(row,3).v || '').toString();
+    const sleeps = Number(getCell(row,4).v) || 0;
+    const beds = getCell(row,5).f || getCell(row,5).v || '';
+    if(company) companySet.add(company);
+    if(type) typeSet.add(type);
+    if(transmission) transSet.add(transmission);
+    if(sleeps) sleepsSet.add(sleeps);
+    const toilet = getBool(row,7);
+    const shower = getBool(row,8);
+
+    const prices = GROUP_STARTS.map(start => {
+      const audCell = getCell(row, start + 1);
+      const rawText = (audCell.f || audCell.v || '').toString();
+      const soldOut = /sold\s*out/i.test(rawText);
+      return {
+        aud: Number(audCell.v) || null,
+        dayAud: Number(getCell(row,start+2).v) || null,
+        soldOut
+      };
+    });
+
+    const insurance = {
+      avgDayAud: Number(getCell(row,INSURANCE_AVG_DAY_AUD_COL).v)
+    };
+
+    const rowKey = company + '||' + vehicleName;
+    allRows.push({rowKey, company, vehicleName, vehicleLink, type, transmission, sleeps, beds, toilet, shower, prices, insurance});
+  });
+
+  companyOptions = Array.from(companySet).sort();
+  typeOptions = Array.from(typeSet).sort();
+  transOptions = Array.from(transSet).sort();
+  sleepsOptions = Array.from(sleepsSet).sort((a,b) => a - b);
+}
+
+function bucketColorFor(aud){
+  const i = BUCKETS.findIndex(b => aud < b.max);
+  return BUCKETS[i === -1 ? BUCKETS.length - 1 : i];
+}
+function bucketIndexFor(aud){
+  const i = BUCKETS.findIndex(b => aud < b.max);
+  return i === -1 ? BUCKETS.length - 1 : i;
+}
+
+function findGroupForSelection(){
+  return dateOptions.find(g => dateKey(g.startDate) === state.pickup && dateKey(g.endDate) === state.dropoff) || null;
+}
+
+function currentRows(){
+  const group = findGroupForSelection();
+  const gIdx = group ? group.groupIndex : 0;
+  const days = group ? group.days : null;
+  return allRows.map(r => {
+    const price = r.prices[gIdx];
+    const insPerDay = r.insurance && !isNaN(r.insurance.avgDayAud) ? r.insurance.avgDayAud : null;
+    const insTotal = (insPerDay !== null && days) ? insPerDay * days : null;
+    const priceAud = price ? price.aud : null;
+    const grandTotal = (priceAud !== null && insTotal !== null) ? priceAud + insTotal : null;
+    const grandTotalDay = (grandTotal !== null && days) ? grandTotal / days : null;
+    return {...r, price, insurancePerDayAud: insPerDay, insuranceTotal: insTotal, grandTotal, grandTotalDay};
+  });
+}
+
+const HEAT_STOPS = [
+  {t:0, rgb:[71,216,145]},
+  {t:0.25, rgb:[183,225,112]},
+  {t:0.5, rgb:[255,223,110]},
+  {t:0.75, rgb:[255,177,111]},
+  {t:1, rgb:[255,119,107]}
+];
+function heatColor(t){
+  t = Math.max(0, Math.min(1, t));
+  for(let i = 0; i < HEAT_STOPS.length - 1; i++){
+    const a = HEAT_STOPS[i], b = HEAT_STOPS[i+1];
+    if(t >= a.t && t <= b.t){
+      const lt = (t - a.t) / ((b.t - a.t) || 1);
+      return a.rgb.map((c, idx) => Math.round(c + (b.rgb[idx] - c) * lt));
+    }
+  }
+  return HEAT_STOPS[HEAT_STOPS.length - 1].rgb;
+}
+function rgbCss(rgb){ return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`; }
+function heatTextColor(rgb){
+  const lum = 0.299*rgb[0] + 0.587*rgb[1] + 0.114*rgb[2];
+  return lum > 150 ? '#3A362E' : '#FBF6EC';
+}
+function heatStyleFor(value, min, max){
+  const t = max > min ? (value - min) / (max - min) : 0.4;
+  const rgb = heatColor(t);
+  return `background:${rgbCss(rgb)};color:${heatTextColor(rgb)}`;
+}
+
+function applyFiltersAndSort(rows){
+  let out = rows.filter(r => {
+    if(state.companies.size && !state.companies.has(r.company)) return false;
+    if(state.types.size && !state.types.has(r.type)) return false;
+    if(state.transmissions.size && !state.transmissions.has(r.transmission)) return false;
+    if(state.sleepsVals.size && !Array.from(state.sleepsVals).some(min => r.sleeps >= min)) return false;
+    if(state.bedsCategory.size && !state.bedsCategory.has(bedCategoryFor(r.beds))) return false;
+    if(state.toilet && !r.toilet) return false;
+    if(state.shower && !r.shower) return false;
+    if(state.buckets.size){
+      if(r.price && r.price.aud !== null){
+        if(!state.buckets.has(bucketIndexFor(r.price.aud))) return false;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  out.sort((a,b) => {
+    let av, bv;
+    switch(state.sortKey){
+      case 'company': av=a.company; bv=b.company; break;
+      case 'vehicle': av=a.vehicleName; bv=b.vehicleName; break;
+      case 'type': av=a.type; bv=b.type; break;
+      case 'transmission': av=a.transmission; bv=b.transmission; break;
+      case 'sleeps': av=a.sleeps; bv=b.sleeps; break;
+      case 'beds': av=a.beds; bv=b.beds; break;
+      case 'priceAUD': av=a.price ? a.price.aud : null; bv=b.price ? b.price.aud : null; break;
+      case 'priceDayAUD': av=a.price ? a.price.dayAud : null; bv=b.price ? b.price.dayAud : null; break;
+      case 'insurance': av=a.insuranceTotal; bv=b.insuranceTotal; break;
+      case 'grandTotal': av=a.grandTotal; bv=b.grandTotal; break;
+      case 'grandTotalDay': av=a.grandTotalDay; bv=b.grandTotalDay; break;
+      default: av=''; bv='';
+    }
+    if(av === null || av === undefined) av = state.sortDir === 'asc' ? Infinity : -Infinity;
+    if(bv === null || bv === undefined) bv = state.sortDir === 'asc' ? Infinity : -Infinity;
+    if(typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if(av < bv) return state.sortDir === 'asc' ? -1 : 1;
+    if(av > bv) return state.sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return out;
+}
+
+function fmtMoney(n){
+  if(n === null || n === undefined || isNaN(n)) return '—';
+  return Math.round(n).toLocaleString();
+}
+
+function typeColor(type){
+  return type.toLowerCase().includes('motor')
+    ? {bg:'var(--coral-bg)', text:'var(--coral-text)'}
+    : {bg:'var(--teal-bg)', text:'var(--teal-text)'};
+}
+function transColor(trans){
+  return trans.toLowerCase().includes('man')
+    ? {bg:'var(--gold-bg)', text:'var(--gold-text)'}
+    : {bg:'var(--lilac-bg)', text:'var(--lilac-text)'};
+}
+function typeBadge(type){
+  const c = typeColor(type);
+  return `<span class="badge" style="background:${c.bg};color:${c.text}">${escapeHtml(type)}</span>`;
+}
+function transBadge(trans){
+  const c = transColor(trans);
+  return `<span class="badge" style="background:${c.bg};color:${c.text}">${escapeHtml(trans)}</span>`;
+}
+function amenityIcon(on, letter){
+  return `<span class="amenity ${on ? 'on' : 'off'}">${letter}</span>`;
+}
+function companyPromoBadge(company){
+  if(/indie/i.test(company)){
+    return `<br><span class="promo-badge" tabindex="0" data-tooltip="Use promo code MORE25 at checkout for additional savings">MORE25</span>`;
+  }
+  if(/star\s*rv/i.test(company)){
+    return `<br><span class="promo-badge" tabindex="0" data-tooltip="Use promo code EARLYBIRD10 at checkout for additional savings">EARLYBIRD10</span>`;
+  }
+  return '';
+}
+function companyPromoBadgeInline(company){
+  if(/indie/i.test(company)){
+    return `<span class="promo-badge" tabindex="0" data-tooltip="Use promo code MORE25 at checkout for additional savings">MORE25</span>`;
+  }
+  if(/star\s*rv/i.test(company)){
+    return `<span class="promo-badge" tabindex="0" data-tooltip="Use promo code EARLYBIRD10 at checkout for additional savings">EARLYBIRD10</span>`;
+  }
+  return '';
+}
+const VEHICLE_PHOTOS = {
+  'Polaris 6': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCEa4gsgKHQgOrJcWPHg7zhbCdPzsDxR0WQNQ4KGd5YesVpUKWMP36OiA&s=10',
+  'Comfort Plus': 'https://images.prismic.io/indiecampers-demo/aj1W3lbRV8_Qf4rv_eu-california-grand-4-auto-base%404x.png?auto=format%2Ccompress&rect=6%2C0%2C4788%2C3192&w=1920&h=800&fit=max&q=75',
+  'Family Plus': 'https://images.prismic.io/indiecampers-demo/928YVfB4IAZ4Futy_ChatGPTImage3_09_2026%2C15_31_57.png?auto=format%2Ccompress&w=1920&h=800&fit=max&q=75',
+  'Big Six 6 Berth': 'https://prod-thl-retail.xperience-sites.com/getmedia/a5299cd1-95d8-4604-a8fe-fdae7d2b6d34/Mighty_Big-Six_NZ-LakeTaupoRegion-DSC01823.jpg',
+  'Big Kahuna 6 Berth': 'https://cdn.jucy.com/cdn-cgi/image/width=2560,format=auto/https://storage.googleapis.com/jucy-chilwa-prod-57ad03.appspot.com/Image/2024065_Chilld_6_1472_x_980_Photo_1_fe5003d1fd/2024065_Chilld_6_1472_x_980_Photo_1_fe5003d1fd.jpg',
+  'River 6 Berth': 'https://prod-thl-retail.xperience-sites.com/getmedia/0e7355d1-2c3b-41a4-986e-edda213402ea/maui_River_YarraValley_Victoria_P1415726.jpg',
+  'Apollo Euro Deluxe': 'https://www.apollocamper.com/getmedia/8c9c7633-7477-42b4-9b82-6bb72e3fcf02/Apollo_Euro_Deluxe_External_0642.jpg',
+  'Navigator 5 Berth': 'https://res.cloudinary.com/thl/image/upload/c_fill,f_auto,q_75,w_1180/v1765408794/rentals/britz/images/Britz%20NZ%20Summer%20Fleet_Navigator_06%20(2).jpg'
+};
+const VEHICLE_PHOTO_POSITION = {};
+const COMPANY_LOGOS = [
+  {re:/maui/i, url:'https://s3-eu-west-1.amazonaws.com/tpd/logos/5c48d44c3712100001b57163/0x0.png'},
+  {re:/mighty/i, url:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpoYE6WwX7yxBk-FqWG5U_S2TbwhaZsJOjLvTnNAsO6UKhfC1RHHnC01E&s=10'},
+  {re:/star\s*rv/i, url:'https://s3-eu-west-1.amazonaws.com/tpd/logos/5e4a97e480da5a0001aed43d/0x0.png'},
+  {re:/apollo/i, url:'https://files.vroomvroomvroom.com/assets/campervan/logo-apollo-200x80_3x.png'},
+  {re:/britz/i, url:'https://www.racv.com.au/content/dam/racv-assets/images/logos/travel-experiences/420x315/britz-logo-420x315.jpg'},
+  {re:/indie/i, url:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQefLYVioguYWnz2vbXs8RsJgc_F_EvadjRInEpJBakBg_4_6d_JdXMcss-&s=10'}
+];
+function companyLogoUrl(company){
+  const match = COMPANY_LOGOS.find(c => c.re.test(company));
+  return match ? match.url : null;
+}
+
+function computeTiles(rows){
+  const priced = rows.filter(r => r.grandTotal !== null && !isNaN(r.grandTotal));
+  if(!priced.length) return null;
+  const cheapest = priced.reduce((a,b) => b.grandTotal < a.grandTotal ? b : a);
+  const twoPlus = priced.filter(r => parseBedCount(r.beds) > 2);
+  const cheapest2 = twoPlus.length ? twoPlus.reduce((a,b) => b.grandTotal < a.grandTotal ? b : a) : null;
+  const avg = priced.reduce((s,r) => s + r.grandTotal, 0) / priced.length;
+  const avgDay = priced.reduce((s,r) => s + (r.grandTotalDay || 0), 0) / priced.length;
+  const highest = priced.reduce((a,b) => b.grandTotal > a.grandTotal ? b : a);
+  return {cheapest, cheapest2, avg, avgDay, highest};
+}
+
+function renderTiles(rows, days){
+  const container = document.getElementById('tilesRow');
+  const t = computeTiles(rows);
+  if(!t){ container.innerHTML = ''; return; }
+  const dTxt = days ? ` (${days}d)` : '';
+  const noteHtml = text => `<div class="tile-note" style="color:${text}">Estimate: vehicle hire + insurance</div>`;
+  const optionTile = (label, bg, text, row) => {
+    if(!row) return `<div class="tile" style="background:${bg}"><div class="tile-label" style="color:${text}">${label}</div><div class="tile-price" style="color:${text}">—</div>${noteHtml(text)}</div>`;
+    return `<div class="tile" style="background:${bg}">
+      <div class="tile-label" style="color:${text}">${label}</div>
+      <div class="tile-price" style="color:${text}">$${fmtMoney(row.grandTotal)}<span class="tile-perday" style="color:${text}"> · $${fmtMoney(row.grandTotalDay)}/day${dTxt}</span></div>
+      <div class="tile-sub" style="color:${text}">${escapeHtml(row.vehicleName)} · ${escapeHtml(row.company)}</div>
+      ${noteHtml(text)}
+    </div>`;
+  };
+  container.innerHTML =
+    optionTile('Cheapest option', 'var(--turquoise-bg)', 'var(--turquoise-text)', t.cheapest) +
+    optionTile('Cheapest, >2 beds', 'var(--lilac-bg)', 'var(--lilac-text)', t.cheapest2) +
+    `<div class="tile" style="background:var(--gold-bg)">
+      <div class="tile-label" style="color:var(--gold-text)">Average grand total</div>
+      <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(t.avg)}<span class="tile-perday" style="color:var(--gold-text)"> · $${fmtMoney(t.avgDay)}/day${dTxt}</span></div>
+      <div class="tile-sub" style="color:var(--gold-text)">Across ${document.getElementById('tbody').children.length} matching vehicles</div>
+      ${noteHtml('var(--gold-text)')}
+    </div>` +
+    optionTile('Highest price option', 'var(--plum-bg)', 'var(--plum-text)', t.highest);
+}
+
+function render(){
+  const group = findGroupForSelection();
+  const days = group ? group.days : null;
+  const rows = applyFiltersAndSort(currentRows());
+
+  const priceVals = rows.map(r => r.price && r.price.aud !== null ? r.price.aud : null).filter(v => v !== null);
+  const priceMin = priceVals.length ? Math.min(...priceVals) : 0;
+  const priceMax = priceVals.length ? Math.max(...priceVals) : 0;
+
+  const insVals = rows.map(r => r.insuranceTotal).filter(v => v !== null);
+  const insMin = insVals.length ? Math.min(...insVals) : 0;
+  const insMax = insVals.length ? Math.max(...insVals) : 0;
+
+  const gtVals = rows.map(r => r.grandTotal).filter(v => v !== null);
+  const gtMin = gtVals.length ? Math.min(...gtVals) : 0;
+  const gtMax = gtVals.length ? Math.max(...gtVals) : 0;
+
+  const tbody = document.getElementById('tbody');
+  const soldOutTag = '<span style="font-size:9.5px;font-weight:700;letter-spacing:0.02em;color:var(--coral-text)">SOLD OUT</span>';
+  tbody.innerHTML = rows.map(r => {
+    const vehicleCell = r.vehicleLink
+      ? `<a class="vehicle-link" href="${escapeHtml(r.vehicleLink)}" target="_blank" rel="noopener">${escapeHtml(r.vehicleName)}</a>`
+      : escapeHtml(r.vehicleName);
+
+    const isSoldOut = !!(r.price && r.price.soldOut);
+    const priceAUD = r.price ? r.price.aud : null;
+    const priceCell = priceAUD !== null
+      ? `<span class="price-cell" style="${heatStyleFor(priceAUD, priceMin, priceMax)}">$${fmtMoney(priceAUD)}</span>`
+      : (isSoldOut ? soldOutTag : '—');
+    const insCell = r.insuranceTotal !== null
+      ? `<span class="price-cell" style="${heatStyleFor(r.insuranceTotal, insMin, insMax)}">$${fmtMoney(r.insuranceTotal)}</span>`
+      : (isSoldOut ? soldOutTag : '—');
+    const gtCell = r.grandTotal !== null
+      ? `<span class="price-cell" style="${heatStyleFor(r.grandTotal, gtMin, gtMax)}" title="This is an estimate based on the cost of vehicle hire + the average of insurance options, over the duration of the trip.">$${fmtMoney(r.grandTotal)}</span>`
+      : (isSoldOut ? soldOutTag : '—');
+
+    return `<tr class="${r.rowKey === state.chosenKey ? 'chosen-row' : ''}">
+      <td>${escapeHtml(r.company)}${companyPromoBadge(r.company)}</td>
+      <td>${vehicleCell}</td>
+      <td>${typeBadge(r.type)}</td>
+      <td>${transBadge(r.transmission)}</td>
+      <td class="col-center">${r.sleeps || '—'}</td>
+      <td class="wrap col-center">${escapeHtml(r.beds)}</td>
+      <td class="col-center">${amenityIcon(r.toilet,'T')}${amenityIcon(r.shower,'S')}</td>
+      <td class="col-extra">${priceCell}</td>
+      <td class="col-extra">${priceAUD !== null ? '$' + fmtMoney(r.price.dayAud) : (isSoldOut ? soldOutTag : '—')}</td>
+      <td class="col-extra">${insCell}</td>
+      <td class="col-center">${gtCell}</td>
+      <td class="col-center">${r.grandTotalDay !== null ? '$' + fmtMoney(r.grandTotalDay) : (isSoldOut ? soldOutTag : '—')}</td>
+      <td><button class="choose-btn" data-key="${escapeHtml(r.rowKey)}">${r.rowKey === state.chosenKey ? 'Chosen ✓' : 'Choose →'}</button></td>
+    </tr>`;
+  }).join('');
+  document.querySelectorAll('.choose-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.chosenKey = btn.dataset.key;
+      populateVehicleSelect();
+      switchTab('split');
+      render();
+    });
+  });
+  renderTiles(rows, days);
+  populateVehicleSelect();
+  renderSplit();
+  renderShortlist();
+
+  const badge = document.getElementById('tripLengthBadge');
+  if(badge){
+    badge.textContent = days ? `${days} days selected` : 'Select pick up + drop off';
+  }
+}
+
+function renderShortlist(){
+  const grid = document.getElementById('shortlistGrid');
+  const empty = document.getElementById('shortlistEmpty');
+  if(!grid) return;
+
+  const group = findGroupForSelection();
+  const datesBadge = document.getElementById('shortlistDatesBadge');
+  if(datesBadge){
+    datesBadge.textContent = group
+      ? `${formatDateLabel(group.startDate)} → ${formatDateLabel(group.endDate)} (${group.days}d) · change`
+      : 'Select dates';
+  }
+
+  const rows = applyFiltersAndSort(currentRows()).filter(r => parseBedCount(r.beds) >= 3);
+
+  if(!rows.length){
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  grid.innerHTML = rows.map(r => {
+    const isSoldOut = !!(r.price && r.price.soldOut);
+    const priceAud = r.price ? r.price.aud : null;
+    const unavailable = isSoldOut || priceAud === null;
+    const soldOutRibbon = isSoldOut ? `<div class="sl-soldout-badge">SOLD OUT</div>` : '';
+    const priceBlock = priceAud !== null ? `
+        <div class="sl-price-row"><span>Vehicle hire</span><span>$${fmtMoney(priceAud)}</span></div>
+        <div class="sl-price-row"><span>Insurance est.</span><span>$${fmtMoney(r.insuranceTotal)}</span></div>
+        <div class="sl-grand"><span style="font-size:12px;color:var(--muted)">Grand total est.*</span><span class="amount">$${fmtMoney(r.grandTotal)}</span></div>
+        <div class="sl-price-row"><span>Per day</span><span>$${fmtMoney(r.grandTotalDay)}</span></div>`
+      : `<p style="color:var(--coral-text);font-weight:600;font-size:12.5px;margin:4px 0">Not available for these dates</p>`;
+
+    const photoUrl = VEHICLE_PHOTOS[r.vehicleName];
+    const imageStyle = photoUrl ? `background-image:url('${photoUrl}');background-size:cover;background-position:${VEHICLE_PHOTO_POSITION[r.vehicleName] || 'center'};` : '';
+    const imgTag = r.vehicleLink ? 'a' : 'div';
+    const imgAttrs = r.vehicleLink ? `href="${escapeHtml(r.vehicleLink)}" target="_blank" rel="noopener"` : '';
+
+    return `<div class="sl-card">
+      <${imgTag} class="sl-card-image" style="${imageStyle}" ${imgAttrs}>${photoUrl ? '' : '🚐'}${soldOutRibbon}</${imgTag}>
+      <div class="sl-card-body">
+        <div class="sl-logo-row">
+          ${companyLogoUrl(r.company) ? `<img class="sl-logo" src="${companyLogoUrl(r.company)}" alt="${escapeHtml(r.company)}">` : `<span class="sl-company">${escapeHtml(r.company)}</span>`}
+          ${companyPromoBadgeInline(r.company)}
+        </div>
+        <div class="sl-name">${escapeHtml(r.vehicleName)}</div>
+        <div class="sl-features">
+          <span class="sl-feature">👤 ${r.sleeps} adults</span>
+          <span class="sl-feature">🛏️ ${escapeHtml(r.beds)}</span>
+          ${transBadge(r.transmission)}
+          <span class="sl-feature">${r.toilet ? '✓' : '✗'} Toilet</span>
+          <span class="sl-feature">${r.shower ? '✓' : '✗'} Shower</span>
+        </div>
+        <div class="sl-price-block">${priceBlock}</div>
+        <button class="sl-cta" data-key="${escapeHtml(r.rowKey)}" ${unavailable ? 'disabled style="opacity:0.5"' : ''}>${unavailable ? 'Unavailable' : 'Choose this van →'}</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.sl-cta:not([disabled])').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.chosenKey = btn.dataset.key;
+      populateVehicleSelect();
+      switchTab('split');
+      render();
+    });
+  });
+}
+
+function renderToggleGroup(containerIds, values, selectedSet, colorFn, labelFn){
+  const ids = Array.isArray(containerIds) ? containerIds : [containerIds];
+  ids.forEach(id => {
+    const container = document.getElementById(id);
+    if(!container) return;
+    container.innerHTML = values.map(v => {
+      const active = selectedSet.has(v);
+      const colors = colorFn ? colorFn(v) : {bg:'var(--lilac-bg)', text:'var(--lilac-text)'};
+      const style = active
+        ? `background:${colors.bg};color:${colors.text};border-color:${colors.text}`
+        : `background:#fff;color:var(--muted);border-color:var(--border)`;
+      const label = labelFn ? labelFn(v) : v;
+      return `<button class="chip" data-val="${escapeHtml(String(v))}" style="${style}">${escapeHtml(String(label))}</button>`;
+    }).join('');
+    container.querySelectorAll('.chip').forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        const v = values[i];
+        if(selectedSet.has(v)) selectedSet.delete(v); else selectedSet.add(v);
+        renderToggleGroup(containerIds, values, selectedSet, colorFn, labelFn);
+        render();
+      });
+    });
+  });
+}
+
+function renderBucketChips(){
+  const ids = ['bucketRow', 'shortlistBucketRow'];
+  ids.forEach(id => {
+    const container = document.getElementById(id);
+    if(!container) return;
+    container.innerHTML = BUCKETS.map((b, i) => {
+      const active = state.buckets.has(i);
+      const style = active
+        ? `background:${b.bg};color:${b.text};border-color:${b.text}`
+        : `background:#fff;color:var(--muted);border-color:var(--border)`;
+      return `<button class="chip" data-bucket="${i}" style="${style}">${b.label}</button>`;
+    }).join('');
+    container.querySelectorAll('.chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.bucket);
+        if(state.buckets.has(i)) state.buckets.delete(i); else state.buckets.add(i);
+        renderBucketChips();
+        render();
+      });
+    });
+  });
+}
+
+function renderAmenityChips(){
+  const defs = [
+    {key:'toilet', label:'Toilet', bg:'var(--gold-bg)', text:'var(--gold-text)'},
+    {key:'shower', label:'Shower', bg:'var(--pink-bg)', text:'var(--pink-text)'}
+  ];
+  const container = document.getElementById('amenityChips');
+  container.innerHTML = defs.map(d => {
+    const active = state[d.key];
+    const style = active
+      ? `background:${d.bg};color:${d.text};border-color:${d.text}`
+      : `background:#fff;color:var(--muted);border-color:var(--border)`;
+    return `<button class="chip" data-amenity="${d.key}" style="${style}">${d.label}</button>`;
+  }).join('');
+  container.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.amenity;
+      state[key] = !state[key];
+      renderAmenityChips();
+      render();
+    });
+  });
+}
+
+function validDropoffsFor(pickupKey){
+  return dropoffOptions.filter(d => dateOptions.some(g => dateKey(g.startDate) === pickupKey && dateKey(g.endDate) === d.key));
+}
+
+function syncTravellerDefaultsToDropoff(){
+  const group = findGroupForSelection();
+  if(!group) return;
+  const fullReturn = toISODate(group.endDate);
+  state.travellers.forEach(t => {
+    if(!t.customized) t.returnDate = fullReturn;
+  });
+}
+
+function renderDateChips(){
+  const pContainer = document.getElementById('pickupChips');
+  pContainer.innerHTML = pickupOptions.map(o => {
+    const active = o.key === state.pickup;
+    const style = active
+      ? `background:var(--lilac-bg);color:var(--lilac-text);border-color:var(--lilac-text)`
+      : `background:#fff;color:var(--muted);border-color:var(--border)`;
+    return `<button class="chip" data-key="${o.key}" style="${style}">${formatDateLabel(o.date)}</button>`;
+  }).join('');
+  pContainer.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.pickup = btn.dataset.key;
+      const valid = validDropoffsFor(state.pickup);
+      if(!valid.some(d => d.key === state.dropoff)){
+        state.dropoff = valid.length ? valid[0].key : null;
+      }
+      syncTravellerDefaultsToDropoff();
+      renderTravellerRows(findGroupForSelection());
+      renderDateChips();
+      render();
+    });
+  });
+
+  const validDrop = validDropoffsFor(state.pickup);
+  const dContainer = document.getElementById('dropoffChips');
+  dContainer.innerHTML = validDrop.map(o => {
+    const active = o.key === state.dropoff;
+    const style = active
+      ? `background:var(--coral-bg);color:var(--coral-text);border-color:var(--coral-text)`
+      : `background:#fff;color:var(--muted);border-color:var(--border)`;
+    return `<button class="chip" data-key="${o.key}" style="${style}">${formatDateLabel(o.date)}</button>`;
+  }).join('');
+  dContainer.querySelectorAll('.chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.dropoff = btn.dataset.key;
+      syncTravellerDefaultsToDropoff();
+      renderTravellerRows(findGroupForSelection());
+      renderDateChips();
+      render();
+    });
+  });
+}
+
+function switchTab(name){
+  document.getElementById('page-vehicle').style.display = name === 'vehicle' ? 'flex' : 'none';
+  document.getElementById('page-shortlist').style.display = name === 'shortlist' ? 'flex' : 'none';
+  document.getElementById('page-split').style.display = name === 'split' ? 'flex' : 'none';
+  document.getElementById('tab-vehicle').classList.toggle('active', name === 'vehicle');
+  document.getElementById('tab-shortlist').classList.toggle('active', name === 'shortlist');
+  document.getElementById('tab-split').classList.toggle('active', name === 'split');
+}
+
+function populateVehicleSelect(){
+  const sel = document.getElementById('vehicleSelect');
+  if(!sel) return;
+  const rows = currentRows().slice().sort((a,b) => (a.grandTotal ?? Infinity) - (b.grandTotal ?? Infinity));
+  sel.innerHTML = rows.map(r => `<option value="${escapeHtml(r.rowKey)}">${escapeHtml(r.company)} — ${escapeHtml(r.vehicleName)}${r.grandTotal !== null ? ' ($' + fmtMoney(r.grandTotal) + ')' : ''}</option>`).join('');
+  if(!state.chosenKey && rows.length && rows[0].grandTotal !== null){
+    state.chosenKey = rows[0].rowKey;
+  }
+  if(state.chosenKey) sel.value = state.chosenKey;
+}
+
+const TRAVELLER_COLORS = [
+  {bg:'var(--lilac-bg)', text:'var(--lilac-text)'},
+  {bg:'var(--coral-bg)', text:'var(--coral-text)'},
+  {bg:'var(--turquoise-bg)', text:'var(--turquoise-text)'},
+  {bg:'var(--gold-bg)', text:'var(--gold-text)'},
+  {bg:'var(--pink-bg)', text:'var(--pink-text)'},
+  {bg:'var(--teal-bg)', text:'var(--teal-text)'}
+];
+
+function renderCalendar(group){
+  const grid = document.getElementById('calendarGrid');
+  const legend = document.getElementById('calendarLegend');
+  const title = document.getElementById('calendarTitle');
+  if(!grid) return;
+  if(!group){ grid.innerHTML = ''; if(legend) legend.innerHTML = ''; return; }
+
+  // Everyone is treated as being in NZ from the earliest possible pick-up date
+  // onward, regardless of which pick-up date is actually selected for the vehicle.
+  const arrivalDate = pickupOptions.length ? pickupOptions[0].date : group.startDate;
+
+  const year = group.startDate.getFullYear();
+  const monthIndex = group.startDate.getMonth();
+  const monthStart = new Date(year, monthIndex, 1);
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  const startWeekday = monthStart.getDay();
+  if(title) title.textContent = `${MONTHS_FULL[monthIndex]} ${year}`;
+
+  let cells = '';
+  for(let i = 0; i < startWeekday; i++) cells += `<div class="cal-day cal-empty"></div>`;
+  for(let d = 1; d <= daysInMonth; d++){
+    const day = new Date(year, monthIndex, d);
+    const inVehicleTrip = day >= group.startDate && day <= group.endDate;
+    const inPrePickup = !inVehicleTrip && day >= arrivalDate && day < group.startDate;
+    const dayClass = inVehicleTrip ? 'cal-in-trip' : (inPrePickup ? 'cal-pre-pickup' : '');
+    const dots = state.travellers.map((t, i) => {
+      const ret = clampDate(t.returnDate ? fromISODate(t.returnDate) : group.endDate, arrivalDate, group.endDate);
+      const present = day >= arrivalDate && day <= ret;
+      if(!present) return '';
+      const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
+      return `<span class="cal-dot" style="background:${c.bg}" title="${escapeHtml(t.name || 'Traveller ' + (i+1))}"></span>`;
+    }).join('');
+    cells += `<div class="cal-day ${dayClass}">
+      <div class="cal-daynum">${d}</div>
+      <div class="cal-dots">${dots}</div>
+    </div>`;
+  }
+  grid.innerHTML = cells;
+
+  if(legend){
+    const dayLegend = `<span><span class="dot" style="background:var(--vehiclepink-border)"></span>Vehicle days</span>` +
+      `<span><span class="dot" style="background:var(--babypink-border)"></span>In NZ before pick-up</span>`;
+    const travellerLegend = state.travellers.map((t, i) => {
+      const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
+      return `<span><span class="dot" style="background:${c.bg}"></span>${escapeHtml(t.name || 'Traveller ' + (i+1))}</span>`;
+    }).join('');
+    legend.innerHTML = dayLegend + travellerLegend;
+  }
+}
+
+function renderTravellerRows(group){
+  const container = document.getElementById('travellerRows');
+  if(!container) return;
+  const minDate = group ? toISODate(group.startDate) : '';
+  const maxDate = group ? toISODate(group.endDate) : '';
+  container.innerHTML = state.travellers.map((t,i) => `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+      <input type="text" class="traveller-name" data-i="${i}" value="${escapeHtml(t.name)}" placeholder="Traveller ${i+1}" style="flex:1;min-width:140px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);font-family:'Inter';font-size:13px">
+      <input type="date" class="traveller-date" data-i="${i}" value="${t.returnDate}" min="${minDate}" max="${maxDate}" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);font-family:'Inter';font-size:13px">
+      ${state.travellers.length > 2 ? `<button class="choose-btn" data-remove="${i}" style="border-color:var(--coral-text);color:var(--coral-text)">Remove</button>` : ''}
+    </div>`).join('');
+  container.querySelectorAll('.traveller-name').forEach(inp => {
+    inp.addEventListener('input', e => { state.travellers[Number(e.target.dataset.i)].name = e.target.value; renderSplit(); });
+  });
+  container.querySelectorAll('.traveller-date').forEach(inp => {
+    inp.addEventListener('change', e => {
+      const t = state.travellers[Number(e.target.dataset.i)];
+      t.returnDate = e.target.value;
+      t.customized = true;
+      renderSplit();
+    });
+  });
+  container.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.travellers.splice(Number(btn.dataset.remove), 1);
+      renderTravellerRows(group);
+      renderSplit();
+    });
+  });
+}
+
+function renderSplit(){
+  const container = document.getElementById('splitContent');
+  const tilesEl = document.getElementById('splitTiles');
+  const summaryEl = document.getElementById('splitSummary');
+  if(!container) return;
+
+  const chosenBase = allRows.find(r => r.rowKey === state.chosenKey);
+  if(!chosenBase){
+    tilesEl.innerHTML = '';
+    summaryEl.innerHTML = '';
+    container.innerHTML = `<div class="split-summary"><p>Choose a vehicle — either from this dropdown, or hit "Choose →" on any row in the Pick your vehicle tab.</p></div>`;
+    document.getElementById('receiptWrap').style.display = 'none';
+    renderCalendar(null);
+    return;
+  }
+
+  const group = findGroupForSelection();
+  const rows = currentRows();
+  const chosen = rows.find(r => r.rowKey === state.chosenKey);
+
+  if(!group || !chosen || chosen.grandTotal === null){
+    tilesEl.innerHTML = '';
+    summaryEl.innerHTML = `<h3>${escapeHtml(chosenBase.vehicleName)}</h3><p>${escapeHtml(chosenBase.company)}</p><p style="margin-top:8px">Pricing isn't available for this vehicle on the currently selected pick up / drop off dates.</p>`;
+    container.innerHTML = '';
+    document.getElementById('receiptWrap').style.display = 'none';
+    renderCalendar(null);
+    return;
+  }
+
+  const totalDays = group.days;
+  const priceAud = chosen.price ? chosen.price.aud : null;
+
+  tilesEl.innerHTML = `
+    <div class="tile" style="background:var(--turquoise-bg)">
+      <div class="tile-label" style="color:var(--turquoise-text)">Vehicle cost</div>
+      <div class="tile-price" style="color:var(--turquoise-text)">$${fmtMoney(priceAud)}</div>
+      <div class="tile-note" style="color:var(--turquoise-text)">Estimate: vehicle hire + insurance</div>
+    </div>
+    <div class="tile" style="background:var(--gold-bg)">
+      <div class="tile-label" style="color:var(--gold-text)">Insurance estimate</div>
+      <div class="tile-price" style="color:var(--gold-text)">$${fmtMoney(chosen.insuranceTotal)}</div>
+      <div class="tile-note" style="color:var(--gold-text)">Estimate: vehicle hire + insurance</div>
+    </div>
+    <div class="tile" style="background:var(--coral-bg)">
+      <div class="tile-label" style="color:var(--coral-text)">Grand total</div>
+      <div class="tile-price" style="color:var(--coral-text)">$${fmtMoney(chosen.grandTotal)}</div>
+      <div class="tile-note" style="color:var(--coral-text)">Estimate: vehicle hire + insurance</div>
+    </div>
+    <div class="tile" style="background:var(--plum-bg)">
+      <div class="tile-label" style="color:var(--plum-text)">Grand total / day</div>
+      <div class="tile-price" style="color:var(--plum-text)">$${fmtMoney(chosen.grandTotalDay)}</div>
+      <div class="tile-note" style="color:var(--plum-text)">Estimate: vehicle hire + insurance</div>
+    </div>`;
+
+  summaryEl.innerHTML = `<h3>${escapeHtml(chosenBase.vehicleName)}</h3>
+    <p>${escapeHtml(chosenBase.company)} · ${formatDateLabel(group.startDate)} → ${formatDateLabel(group.endDate)} · ${totalDays} days</p>`;
+
+  const dailyRate = chosen.grandTotalDay;
+  const totals = state.travellers.map(() => 0);
+  const presentDays = state.travellers.map(() => 0);
+  for(let d = 0; d < totalDays; d++){
+    const day = new Date(group.startDate);
+    day.setDate(day.getDate() + d);
+    const presentIdx = [];
+    state.travellers.forEach((t, i) => {
+      const ret = clampDate(t.returnDate ? fromISODate(t.returnDate) : group.endDate, group.startDate, group.endDate);
+      if(day <= ret){ presentIdx.push(i); presentDays[i]++; }
+    });
+    if(!presentIdx.length) continue;
+    const share = dailyRate / presentIdx.length;
+    presentIdx.forEach(i => { totals[i] += share; });
+  }
+
+  const barHtml = state.travellers.map((t, i) => {
+    const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
+    const pct = chosen.grandTotal ? Math.max(1, (totals[i] / chosen.grandTotal) * 100) : 0;
+    return `<div style="background:${c.bg};color:${c.text};width:${pct}%">${escapeHtml(t.name || 'Traveller ' + (i+1))}</div>`;
+  }).join('');
+
+  const cardsHtml = state.travellers.map((t, i) => {
+    const c = TRAVELLER_COLORS[i % TRAVELLER_COLORS.length];
+    return `<div class="split-card" style="background:${c.bg}">
+      <div class="tile-label" style="color:${c.text}">${escapeHtml(t.name || 'Traveller ' + (i+1))}</div>
+      <div class="amount" style="color:${c.text}">$${fmtMoney(totals[i])}</div>
+      <div class="tile-sub" style="color:${c.text}">${presentDays[i]} of ${totalDays} days</div>
+    </div>`;
+  }).join('');
+
+  const sumTotals = totals.reduce((a,b) => a + b, 0);
+
+  container.innerHTML = `
+    <div class="split-bar">${barHtml}</div>
+    <div class="split-cards">${cardsHtml}</div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">Owed across all travellers: $${fmtMoney(sumTotals)} (grand total $${fmtMoney(chosen.grandTotal)})</p>
+  `;
+
+  const vehicleDay = chosen.price ? chosen.price.dayAud : null;
+  const contribLines = state.travellers.map((t, i) =>
+    `<div class="r-line"><span>${escapeHtml(t.name || 'Traveller ' + (i+1))}</span><span>$${fmtMoney(totals[i])}</span></div>`
+  ).join('');
+  const rawBalance = chosen.grandTotal - sumTotals;
+  const balanceDisplay = Math.abs(rawBalance) < 0.005 ? '$0.00' : (rawBalance > 0 ? '$' : '-$') + Math.abs(rawBalance).toFixed(2);
+
+  document.getElementById('receiptContent').innerHTML = `
+    <div class="r-head">
+      <div class="r-title">NZ NOODLES</div>
+      <div class="r-sub">Vehicle Hire Receipt</div>
+    </div>
+    <hr>
+    <div class="r-line"><strong>${escapeHtml(chosenBase.vehicleName)}</strong></div>
+    <div class="r-sub">${escapeHtml(chosenBase.company)}</div>
+    <div class="r-sub">${formatDateLabel(group.startDate)} — ${formatDateLabel(group.endDate)} (${totalDays} days)</div>
+    <hr>
+    <div class="r-section-label">VEHICLE HIRE</div>
+    <div class="r-line"><span>Total</span><span>$${fmtMoney(priceAud)}</span></div>
+    <div class="r-sub-line"><span>Per day</span><span>$${fmtMoney(vehicleDay)}</span></div>
+    <div class="r-section-label" style="margin-top:8px">INSURANCE (estimate)</div>
+    <div class="r-line"><span>Total</span><span>$${fmtMoney(chosen.insuranceTotal)}</span></div>
+    <div class="r-sub-line"><span>Per day</span><span>$${fmtMoney(chosen.insurancePerDayAud)}</span></div>
+    <hr>
+    <div class="r-line r-total"><span>GRAND TOTAL</span><span>$${fmtMoney(chosen.grandTotal)}</span></div>
+    <div class="r-sub-line"><span>Per day</span><span>$${fmtMoney(chosen.grandTotalDay)}</span></div>
+    <hr>
+    <div class="r-section-label">CONTRIBUTIONS</div>
+    ${contribLines}
+    <div class="r-balance">OUTSTANDING BALANCE: ${balanceDisplay}</div>
+    <div class="r-foot">*** Thanks for choosing NZ Noodles ***</div>
+  `;
+  document.getElementById('receiptWrap').style.display = 'block';
+
+  renderCalendar(group);
+}
+
+function setupControls(){
+  renderDateChips();
+  renderTravellerRows(findGroupForSelection());
+  renderToggleGroup('companyChips', companyOptions, state.companies, () => ({bg:'var(--lilac-bg)', text:'var(--lilac-text)'}));
+  renderToggleGroup(['typeChips','shortlistTypeChips'], typeOptions, state.types, typeColor);
+  renderToggleGroup(['transChips','shortlistTransChips'], transOptions, state.transmissions, transColor);
+  renderToggleGroup('sleepsChips', sleepsOptions, state.sleepsVals, () => ({bg:'var(--lilac-bg)', text:'var(--lilac-text)'}), v => v + '+');
+  renderToggleGroup('bedsChips', ['2','3plus'], state.bedsCategory, () => ({bg:'var(--coral-bg)', text:'var(--coral-text)'}), v => v === '2' ? '2 beds' : '3 beds+');
+  renderAmenityChips();
+  renderBucketChips();
+
+  document.querySelectorAll('th[data-key]').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      if(state.sortKey === key){
+        state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        state.sortKey = key;
+        state.sortDir = 'asc';
+      }
+      render();
+    });
+  });
+
+  document.getElementById('goToVehicleTab').addEventListener('click', () => switchTab('vehicle'));
+
+  populateVehicleSelect();
+  document.getElementById('vehicleSelect').addEventListener('change', e => {
+    state.chosenKey = e.target.value;
+    render();
+  });
+  document.getElementById('addTravellerBtn').addEventListener('click', () => {
+    const group = findGroupForSelection();
+    const fullReturn = group ? toISODate(group.endDate) : '';
+    state.travellers.push({name:'', returnDate: fullReturn, customized:false});
+    renderTravellerRows(group);
+    renderSplit();
+  });
+
+  document.getElementById('toggleColsBtn').addEventListener('click', () => {
+    const wrap = document.getElementById('tableWrap');
+    const collapsed = wrap.classList.toggle('collapsed');
+    document.getElementById('toggleColsBtn').textContent = collapsed ? 'Show price & insurance breakdown' : 'Hide price & insurance breakdown';
+  });
+}
+
+(async function init(){
+  document.getElementById('tab-vehicle').addEventListener('click', () => switchTab('vehicle'));
+  document.getElementById('tab-shortlist').addEventListener('click', () => switchTab('shortlist'));
+  document.getElementById('tab-split').addEventListener('click', () => switchTab('split'));
+  document.getElementById('shortlistDatesBadge').addEventListener('click', () => switchTab('vehicle'));
+  try{
+    await loadData();
+    setupControls();
+    render();
+    document.getElementById('status').style.display = 'none';
+    document.getElementById('tableWrap').style.display = 'block';
+  }catch(err){
+    document.getElementById('status').textContent =
+      'Could not load the sheet — make sure it\'s shared as "Anyone with the link can view", then reload this page. (' + err.message + ')';
+  }
+})();
+</script>
+
+</body>
+</html>
