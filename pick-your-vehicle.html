@@ -132,6 +132,9 @@ tr.chosen-row td{background:#F3ECFA;}
 .cal-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--ink);}
 .cal-legend .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid rgba(58,54,46,0.25);}
 
+.split-side-by-side{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;}
+.split-side-by-side .receipt-wrap,
+.split-side-by-side .calendar{flex:1 1 320px;max-width:380px;margin:22px 0 0;}
 .receipt-wrap{max-width:400px;margin:22px auto;}
 .receipt-edge{height:11px;background:linear-gradient(-45deg,#FFFDF8 6px,transparent 6px) 0 0,linear-gradient(45deg,#FFFDF8 6px,transparent 6px) 0 0;background-size:12px 12px;background-repeat:repeat-x;}
 .receipt-edge.bottom{transform:rotate(180deg);}
@@ -352,19 +355,21 @@ tr.chosen-row td{background:#F3ECFA;}
 
     <div id="splitContent"></div>
 
-    <div class="receipt-wrap" id="receiptWrap" style="display:none">
-      <div class="receipt-edge"></div>
-      <div class="receipt" id="receiptContent"></div>
-      <div class="receipt-edge bottom"></div>
-    </div>
-
-    <div class="calendar">
-      <p class="split-summary" style="margin:18px 0 10px;padding:10px 16px;font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:16px;color:var(--heading)" id="calendarTitle">November</p>
-      <div class="cal-grid" style="margin-bottom:4px">
-        <div class="cal-weekday">Sun</div><div class="cal-weekday">Mon</div><div class="cal-weekday">Tue</div><div class="cal-weekday">Wed</div><div class="cal-weekday">Thu</div><div class="cal-weekday">Fri</div><div class="cal-weekday">Sat</div>
+    <div class="split-side-by-side">
+      <div class="receipt-wrap" id="receiptWrap" style="display:none">
+        <div class="receipt-edge"></div>
+        <div class="receipt" id="receiptContent"></div>
+        <div class="receipt-edge bottom"></div>
       </div>
-      <div class="cal-grid" id="calendarGrid"></div>
-      <div class="cal-legend" id="calendarLegend"></div>
+
+      <div class="calendar">
+        <p class="split-summary" style="margin:18px 0 10px;padding:10px 16px;font-family:'Fraunces',serif;font-style:italic;font-weight:600;font-size:16px;color:var(--heading)" id="calendarTitle">November</p>
+        <div class="cal-grid" style="margin-bottom:4px">
+          <div class="cal-weekday">Sun</div><div class="cal-weekday">Mon</div><div class="cal-weekday">Tue</div><div class="cal-weekday">Wed</div><div class="cal-weekday">Thu</div><div class="cal-weekday">Fri</div><div class="cal-weekday">Sat</div>
+        </div>
+        <div class="cal-grid" id="calendarGrid"></div>
+        <div class="cal-legend" id="calendarLegend"></div>
+      </div>
     </div>
 
     <p style="font-size:12px;color:var(--muted);margin-top:14px">Insurance figures are estimates — see note on the Pick your vehicle tab.</p>
